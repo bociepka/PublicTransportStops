@@ -12,41 +12,42 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 class DeparturesActivity : AppCompatActivity() {
-
+    var departuresList = mutableListOf<Departure>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_departures)
-        var id = intent.getIntExtra("id",1)
-        textView.text = id.toString()
+        val id = intent.getIntExtra("id", 1)
         getDepartures(id)
     }
 
 
-
-
-    private fun onDeparturesReady(){
-        Log.i("TAG","Done")
+    private fun onDeparturesReady() {
+        val departuresAdapter = DeparturesAdapter(departuresList as ArrayList<Departure>)
+        departuresListView.adapter = departuresAdapter
+        departuresAdapter.notifyDataSetChanged()
     }
 
 
-
-
-    private fun getDepartures(id:Int){
+    private fun getDepartures(id: Int) {
+        departuresList.removeAll { true }
         val url = "https://krakowpodreka.pl/pl/stops/schedule/stop/$id/"
 
-        Log.i("TAG", "Helper thread started")
-
-        val directionsRequest = object : StringRequest(Request.Method.GET, url, Response.Listener<String> { response ->
-            val jsonResponse = JSONObject(response)
-            val departuresArray = jsonResponse.getJSONArray("future")
-            for (i in 0..departuresArray.length()-1) {
-                Log.i("TAG", departuresArray.get(i).toString())
-            }
-            onDeparturesReady()
-        }, Response.ErrorListener {
-        }){}
+        val directionsRequest =
+            object : StringRequest(Method.GET, url, Response.Listener<String> { response ->
+                val jsonResponse = JSONObject(response)
+                val departuresArray = jsonResponse.getJSONArray("future")
+                for (i in 0..departuresArray.length() - 1) {
+                    val jsonDeparture = departuresArray.getJSONObject(i)
+                    val displayTime = jsonDeparture.get("display_time").toString()
+                    val lineNumber = jsonDeparture.get("line_number").toString()
+                    val direction = jsonDeparture.get("direction").toString()
+                    val departure = Departure(displayTime, lineNumber, direction, "", "")
+                    departuresList.add(departure)
+                }
+                onDeparturesReady()
+            }, Response.ErrorListener {
+            }) {}
         val requestQueue = Volley.newRequestQueue(this)
         requestQueue.add(directionsRequest)
-        Log.i("TAG","Helper thread ended")
     }
 }
