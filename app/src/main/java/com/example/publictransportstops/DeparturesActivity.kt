@@ -7,6 +7,7 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import kotlinx.android.synthetic.main.activity_departures.*
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -15,7 +16,8 @@ class DeparturesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_departures)
-        var id = 1
+        var id = intent.getIntExtra("id",1)
+        textView.text = id.toString()
         getDepartures(id)
     }
 

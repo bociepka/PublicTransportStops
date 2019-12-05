@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.SimpleAdapter
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
@@ -23,24 +24,27 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val thread = Thread(Runnable {
+//        val thread = Thread(Runnable {
         getStops()
-        })
-        thread.start()
-        thread.join()
+//        })
+//        thread.start()
+//        thread.join()
     }
 
 
     private fun onStopsReady(){
 
         correctNames()
-        Log.i("TAG",stopsList[1537].toString())
-        Log.i("TAG",stopsList[96].toString())
-        Log.i("TAG",stopsList[81].toString())
-        textview.text = stopsList[96].toString()
+//        Log.i("TAG",stopsList[1537].toString())
+//        Log.i("TAG",stopsList[96].toString())
+//        Log.i("TAG",stopsList[81].toString())
+//        textview.text = stopsList[96].toString()
 
-        val intent = Intent(this, DeparturesActivity::class.java)
-        startActivity(intent)
+//        val intent = Intent(this, DeparturesActivity::class.java)
+//        startActivity(intent)
+        val myAdapter = StopsAdapter(stopsList as ArrayList<Stop>)
+        listView.adapter = myAdapter
+        myAdapter.notifyDataSetChanged()
     }
 
     private fun correctNames(){
