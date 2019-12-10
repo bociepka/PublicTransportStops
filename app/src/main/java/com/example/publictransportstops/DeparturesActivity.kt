@@ -17,6 +17,8 @@ class DeparturesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_departures)
         val id = intent.getIntExtra("id", 1)
+        val stopName = intent.getStringExtra("name")
+        title = stopName
         getDepartures(id)
     }
 

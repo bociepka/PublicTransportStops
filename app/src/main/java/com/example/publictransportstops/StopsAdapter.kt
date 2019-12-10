@@ -33,7 +33,8 @@ class StopsAdapter (var objects: ArrayList<Stop>) : BaseAdapter() {
         view.setOnClickListener{
             val context = parent?.context
             val intent = Intent(context,DeparturesActivity::class.java )
-            intent.putExtra("id",objects.get(position).id)
+            intent.putExtra("id", objects[position].id)
+            intent.putExtra("name",objects[position].name)
             context?.startActivity(intent)
         }
         return view

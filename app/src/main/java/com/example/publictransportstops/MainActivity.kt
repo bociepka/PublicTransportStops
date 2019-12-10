@@ -79,7 +79,9 @@ class MainActivity : AppCompatActivity() {
                     val currentStop = JSONObject(jsonResponse.get(i).toString())
                     val name = currentStop.get("name").toString()
                     val id = currentStop.get("id").toString().toInt()
-                    val stop = Stop(id, name, false)
+                    val latitude = currentStop.get("latitude").toString().toFloat()
+                    val longitude = currentStop.get("longitude").toString().toFloat()
+                    val stop = Stop(id, name, latitude, longitude)
                     stopsList.add(stop)
                 }
                 isDataLoaded = true
