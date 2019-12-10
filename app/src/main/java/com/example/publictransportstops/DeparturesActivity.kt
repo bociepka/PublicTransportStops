@@ -41,7 +41,9 @@ class DeparturesActivity : AppCompatActivity() {
                     val displayTime = jsonDeparture.get("display_time").toString()
                     val lineNumber = jsonDeparture.get("line_number").toString()
                     val direction = jsonDeparture.get("direction").toString()
-                    val departure = Departure(displayTime, lineNumber, direction, "", "")
+                    val category = jsonDeparture.get("category").toString()
+                    val delay = jsonDeparture.get("delay").toString()
+                    val departure = Departure(displayTime, lineNumber, direction, category, delay)
                     departuresList.add(departure)
                 }
                 onDeparturesReady()

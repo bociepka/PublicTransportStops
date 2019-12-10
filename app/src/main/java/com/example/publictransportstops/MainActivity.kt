@@ -3,6 +3,7 @@ package com.example.publictransportstops
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -14,13 +15,14 @@ import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.File
 
 var stopsList = mutableListOf<Stop>()
 var filteredStopsList = ArrayList<Stop>()
 var isDataLoaded = false
 
 class MainActivity : AppCompatActivity() {
-    var searchQuery = "."
+    var searchQuery = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -37,6 +39,8 @@ class MainActivity : AppCompatActivity() {
         filteredStopsList = ArrayList(stopsList)
         var myAdapter = StopsAdapter(filteredStopsList)
         listView.adapter = myAdapter
+        getFavourites()
+        sortStopsList()
         myAdapter.notifyDataSetChanged()
     }
 
@@ -75,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                     val currentStop = JSONObject(jsonResponse.get(i).toString())
                     val name = currentStop.get("name").toString()
                     val id = currentStop.get("id").toString().toInt()
-                    val stop = Stop(id, name)
+                    val stop = Stop(id, name, false)
                     stopsList.add(stop)
                 }
                 isDataLoaded = true
@@ -95,7 +99,26 @@ class MainActivity : AppCompatActivity() {
         }
         var myAdapter = StopsAdapter(filteredStopsList)
         listView.adapter = myAdapter
+        sortStopsList()
         myAdapter.notifyDataSetChanged()
+    }
+
+    fun sortStopsList(){
+        val favouriteStops = ArrayList<Stop>()
+        val nonFavouriteStops = ArrayList<Stop>()
+        for (stop in filteredStopsList) {
+            if (stop.favourite) {
+                favouriteStops.add(stop)
+            }
+            else{
+                nonFavouriteStops.add(stop)
+            }
+        }
+        favouriteStops.sortBy{it.name}
+        nonFavouriteStops.sortBy { it.name }
+        filteredStopsList.removeAll { true }
+        filteredStopsList.addAll(favouriteStops)
+        filteredStopsList.addAll(nonFavouriteStops)
     }
 
 
@@ -117,7 +140,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        if (searchQuery != ".") {
+        if (searchQuery != "") {
             searchView.setQuery(searchQuery, true)
             searchView.isIconified = false
         }
@@ -127,6 +150,7 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("search", searchQuery)
         super.onSaveInstanceState(outState)
+        saveFavourites()
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -134,7 +158,39 @@ class MainActivity : AppCompatActivity() {
         searchQuery = savedInstanceState.getString("search").toString()
         filterOutput(searchQuery)
         super.onRestoreInstanceState(savedInstanceState)
+//        getFavourites()
     }
+
+
+    fun saveFavourites(){
+        val file : File = File(this.filesDir, "favourites.txt")
+        file.writeText("")
+        for ((index, stop) in stopsList.withIndex()){
+            if(stop.favourite){
+                file.appendText("$index,")
+            }
+        }
+    }
+
+    fun getFavourites() {
+        val file : File = File(this.filesDir, "favourites.txt")
+        var favourites: String = file.readText()
+        Log.i("TAG","String read")
+        Log.i("TAG",favourites)
+        var list : List<String> = favourites.split(',')
+        Log.i("TAG","String splitted")
+        for (favourite in list){
+            Log.i("TAG","$favourite")
+            if(favourite.toIntOrNull()!=null)
+            stopsList[favourite.toInt()].favourite = true
+            else{
+                file.writeText("")
+            }
+        }
+        Log.i("TAG","Favourites added")
+//        Log.i("TAG",favourites)
+    }
+
 
 
 }

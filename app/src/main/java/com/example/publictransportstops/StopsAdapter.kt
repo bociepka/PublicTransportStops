@@ -1,10 +1,13 @@
 package com.example.publictransportstops
 
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Button
+import android.widget.CheckBox
 import android.widget.TextView
 
 class StopsAdapter (var objects: ArrayList<Stop>) : BaseAdapter() {
@@ -19,6 +22,13 @@ class StopsAdapter (var objects: ArrayList<Stop>) : BaseAdapter() {
             view = convertView
         }
         view.findViewById<TextView>(R.id.stopName).text = objects.get(position).name
+        val checkBox : CheckBox = view.findViewById<CheckBox>(R.id.favourite)
+        checkBox.isChecked = objects.get(position).favourite
+        checkBox.setOnClickListener{
+            val index = stopsList.indexOf(objects[position])
+            stopsList[index].favourite = checkBox.isChecked
+            Log.i("TAG","${index.toString()} is now ${checkBox.isChecked}")
+        }
 
         view.setOnClickListener{
             val context = parent?.context
