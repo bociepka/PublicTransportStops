@@ -19,7 +19,7 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:subtitle="Delay"
+            app:contentInsetStart="8dp"
             app:title="Line/Direction" />
 
         <androidx.appcompat.widget.Toolbar
@@ -30,7 +30,9 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:title="Departure time" />
+            app:contentInsetStart="8dp"
+            app:title="Departure time"
+            app:titleMargin="4dp" />
     </LinearLayout>
 
     <ListView

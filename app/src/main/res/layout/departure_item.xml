@@ -13,14 +13,19 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="TextView" />
+            android:includeFontPadding="false"
+            android:paddingStart="8dp"
+            android:text="TextView"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/departureTime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="TextView" />
+            android:paddingStart="16dp"
+            android:text="TextView"
+            android:textSize="18sp" />
     </LinearLayout>
 
 </LinearLayout>
