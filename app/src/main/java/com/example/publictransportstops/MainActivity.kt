@@ -1,6 +1,8 @@
 package com.example.publictransportstops
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -8,6 +10,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
+import androidx.core.app.ActivityCompat
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
@@ -27,10 +30,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        requestPermission()
+        button.setOnClickListener {
+            startMapActivity()
+        }
+
         if (!isDataLoaded)
             getStops()
         else
             onStopsReady()
+
     }
 
 
@@ -79,8 +88,8 @@ class MainActivity : AppCompatActivity() {
                     val currentStop = JSONObject(jsonResponse.get(i).toString())
                     val name = currentStop.get("name").toString()
                     val id = currentStop.get("id").toString().toInt()
-                    val latitude = currentStop.get("latitude").toString().toFloat()
-                    val longitude = currentStop.get("longitude").toString().toFloat()
+                    val latitude = currentStop.get("latitude").toString().toDouble()
+                    val longitude = currentStop.get("longitude").toString().toDouble()
                     val stop = Stop(id, name, latitude, longitude)
                     stopsList.add(stop)
                 }
@@ -176,7 +185,12 @@ class MainActivity : AppCompatActivity() {
 
     fun getFavourites() {
         val file : File = File(this.filesDir, "favourites.txt")
-        var favourites: String = file.readText()
+        var favourites: String = ""
+        try {
+            favourites = file.readText()
+        }catch(e: Exception){
+
+        }
         Log.i("TAG","String read")
         Log.i("TAG",favourites)
         var list : List<String> = favourites.split(',')
@@ -192,7 +206,61 @@ class MainActivity : AppCompatActivity() {
         Log.i("TAG","Favourites added")
 //        Log.i("TAG",favourites)
     }
+    /* MAP ACTIVITY */
+
+    fun startMapActivity(){
+        if(requestPermission()){
+            val intent = Intent(this, MapsActivity::class.java)
+            val bundle = Bundle()
+            val tmp = ArrayList(stopsList)
+            bundle.putParcelableArrayList("stops", tmp)
+            intent.putExtras(bundle)
+            startActivityForResult(intent,12)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.i("AAA","AAA")
+
+        if(data==null)
+            return
+
+        val context = this
+        val intent = Intent(context,DeparturesActivity::class.java)
+        val name = data.getStringExtra("name")
+        val id = data.getStringExtra("id")
+
+        intent.putExtra("id", id?.toInt())
+        intent.putExtra("name",name)
+
+        startActivity(intent)
+    }
 
 
+    /* PERMISSIONS */
+
+    private fun requestPermission():Boolean{
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions( this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1 )
+            return false
+        }
+        return true
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+        }else if(grantResults.isNotEmpty()){
+            requestPermission()
+        }
+    }
 
 }
