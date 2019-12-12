@@ -34,6 +34,9 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener {
             startMapActivity()
         }
+        settingsButton.setOnClickListener {
+            startSettings()
+        }
 
         if (!isDataLoaded)
             getStops()
@@ -263,4 +266,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /* SETTINGS */
+
+    fun startSettings(){
+        val intent = Intent(this, Settings::class.java)
+        val bundle = Bundle()
+        intent.putExtras(bundle)
+        startActivityForResult(intent,12)
+    }
 }
