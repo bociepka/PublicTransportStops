@@ -35,6 +35,8 @@ class StopsAdapter (var objects: ArrayList<Stop>) : BaseAdapter() {
             val intent = Intent(context,DeparturesActivity::class.java )
             intent.putExtra("id", objects[position].id)
             intent.putExtra("name",objects[position].name)
+            intent.putExtra("lat",objects[position].latitude)
+            intent.putExtra("lon",objects[position].longitude)
             context?.startActivity(intent)
         }
         return view

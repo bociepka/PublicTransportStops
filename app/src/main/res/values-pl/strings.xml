@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Public Transport Stops</string>
+    <string name="buttonChangeLanguage">Zmień</string>
+    <string name="languageInfo">Język:</string>
+    <string name="title_activity_maps">Mapa</string>
+    <string name="title_activity_settings">Ustawienia</string>
+</resources>
