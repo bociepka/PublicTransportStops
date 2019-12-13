@@ -58,9 +58,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     mMap.addMarker(MarkerOptions().position(LatLng(i.latitude,i.longitude)).title(i.name + "," + i.id))
                 }
             }
+            else{
+                setMarkerOnStop(mMap)
+            }
             mMap.addMarker(MarkerOptions().position(currentLocation).title("You are here")) // TODO set icon
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,15F))
+
             mMap.setOnMarkerClickListener{
                 marker -> onMarkerClick(marker)
             }
@@ -78,10 +82,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         resIntent.putExtra("name",split[0])
         resIntent.putExtra("id",split[1])
+        resIntent.putExtra("latitude",marker.position.latitude)
+        resIntent.putExtra("longitude",marker.position.longitude)
 
         setResult(12,resIntent)
         finish()
         return true
+    }
+
+    fun setMarkerOnStop(mMap: GoogleMap){
+        val name = intent.getStringExtra("name")
+        val lat = intent.getStringExtra("latitude")
+        val long = intent.getStringExtra("longitude")
+
+        Log.i("NAME",name)
+        Log.i("LATITUDE", lat)
+        Log.i("LONGITUDE",long)
+
+        if(lat!=null && long != null)
+            mMap.addMarker(MarkerOptions().position(LatLng(lat.toDouble(),long.toDouble())).title(name))
     }
 
 }

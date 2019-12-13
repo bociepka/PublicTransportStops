@@ -224,18 +224,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.i("AAA","AAA")
 
         if(data==null)
             return
 
         val context = this
         val intent = Intent(context,DeparturesActivity::class.java)
-        val name = data.getStringExtra("name")
         val id = data.getStringExtra("id")
+        val name = data.getStringExtra("name")
+        val latitude = data.getStringExtra("latitude")
+        val longitude = data.getStringExtra("longitude")
 
         intent.putExtra("id", id?.toInt())
         intent.putExtra("name",name)
+        intent.putExtra("latitude",latitude)
+        intent.putExtra("longitude",longitude)
 
         startActivity(intent)
     }

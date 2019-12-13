@@ -1,5 +1,6 @@
 package com.example.publictransportstops
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +21,10 @@ class DeparturesActivity : AppCompatActivity() {
         val stopName = intent.getStringExtra("name")
         title = stopName
         getDepartures(id)
+
+        button2.setOnClickListener {
+            showWayToStop()
+        }
     }
 
 
@@ -54,4 +59,19 @@ class DeparturesActivity : AppCompatActivity() {
         val requestQueue = Volley.newRequestQueue(this)
         requestQueue.add(directionsRequest)
     }
+
+    fun showWayToStop(){
+        val stopIntent = Intent(this,MapsActivity::class.java)
+        val latitude = intent.getStringExtra("latitude")
+        val longitude = intent.getStringExtra("longitude")
+        val stopName = intent.getStringExtra("name")
+
+        stopIntent.putExtra("name",stopName)
+        stopIntent.putExtra("latitude",latitude)
+        stopIntent.putExtra("longitude",longitude)
+
+        startActivity(stopIntent)
+
+    }
+
 }
