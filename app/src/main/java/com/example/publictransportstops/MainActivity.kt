@@ -232,13 +232,13 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(context,DeparturesActivity::class.java)
         val id = data.getStringExtra("id")
         val name = data.getStringExtra("name")
-        val latitude = data.getStringExtra("latitude")
-        val longitude = data.getStringExtra("longitude")
+        val latitude = data.getDoubleExtra("lat",50.063511666)
+        val longitude = data.getDoubleExtra("lon",19.923723888)
 
         intent.putExtra("id", id?.toInt())
         intent.putExtra("name",name)
-        intent.putExtra("latitude",latitude)
-        intent.putExtra("longitude",longitude)
+        intent.putExtra("lat",latitude)
+        intent.putExtra("lon",longitude)
 
         startActivity(intent)
     }
@@ -248,9 +248,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun requestPermission():Boolean{
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions( this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1 )
+            ActivityCompat.requestPermissions( this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 1 )
             return false
         }
         return true

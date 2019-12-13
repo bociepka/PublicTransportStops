@@ -49,6 +49,19 @@ class TrackLocation(private val mContext: Context) : LocationListener {
                 return location
             }
 
+            if(isNetworkEnabled){
+                this.canGetLocation = true
+                locationManager!!.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    MIN_TIME_BW_UPDATES,
+                    MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this
+                )
+                if (locationManager != null) {
+                    location = locationManager!!
+                        .getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
+                }
+            }
+
             if (isGPSEnabled){
                 this.canGetLocation = true
                 // If GPS enabled, get latitude/longitude using GPS Services

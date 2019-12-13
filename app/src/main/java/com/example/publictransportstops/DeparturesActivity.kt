@@ -62,13 +62,14 @@ class DeparturesActivity : AppCompatActivity() {
 
     fun showWayToStop(){
         val stopIntent = Intent(this,MapsActivity::class.java)
-        val latitude = intent.getStringExtra("latitude")
-        val longitude = intent.getStringExtra("longitude")
+        val latitude = intent.getDoubleExtra("lat",50.063511666)
+        val longitude = intent.getDoubleExtra("lon",19.923723888)
         val stopName = intent.getStringExtra("name")
 
+
         stopIntent.putExtra("name",stopName)
-        stopIntent.putExtra("latitude",latitude)
-        stopIntent.putExtra("longitude",longitude)
+        stopIntent.putExtra("lat",latitude)
+        stopIntent.putExtra("lon",longitude)
 
         startActivity(stopIntent)
 

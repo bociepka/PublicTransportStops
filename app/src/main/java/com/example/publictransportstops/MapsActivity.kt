@@ -1,10 +1,15 @@
 package com.example.publictransportstops
 
 import android.content.Intent
+import android.graphics.Color
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -13,6 +18,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
+import com.google.maps.android.PolyUtil
+import org.json.JSONObject
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -21,7 +29,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
         createMapAndMarkMyLocation()
     }
@@ -56,18 +63,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 for (i in stops) {
                     i.calculateDistance(location.latitude,location.longitude)
                     mMap.addMarker(MarkerOptions().position(LatLng(i.latitude,i.longitude)).title(i.name + "," + i.id))
+                    mMap.setOnMarkerClickListener{
+                            marker -> onMarkerClick(marker)
+                    }
                 }
             }
             else{
-                setMarkerOnStop(mMap)
+                val name = intent.getStringExtra("name")
+                val lat = intent.getDoubleExtra("lat",50.063511666)
+                val lon = intent.getDoubleExtra("lon",19.923723888)
+
+                Log.i("NAME",name)
+                Log.i("LATITUDE", lat.toString())
+                Log.i("LONGITUDE",lon.toString())
+
+                mMap.addMarker(MarkerOptions().position(LatLng(lat, lon)).title(name))
+                val url = createURL(currentLocation,"walking",lat,lon)
+                val result = sendRequest(url)
             }
             mMap.addMarker(MarkerOptions().position(currentLocation).title("You are here")) // TODO set icon
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,15F))
-
-            mMap.setOnMarkerClickListener{
-                marker -> onMarkerClick(marker)
-            }
         }
         catch (e: Exception){
             Log.e("Location error","It is impossible to get location using GPS")
@@ -77,30 +93,67 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     fun onMarkerClick(marker: Marker?): Boolean {
         if(marker==null)
             return true
+
         val resIntent = Intent()
         val split = marker.title.split(",")
 
-        resIntent.putExtra("name",split[0])
-        resIntent.putExtra("id",split[1])
-        resIntent.putExtra("latitude",marker.position.latitude)
-        resIntent.putExtra("longitude",marker.position.longitude)
+        if(split.size==2) {
+            resIntent.putExtra("name", split[0])
+            resIntent.putExtra("id", split[1])
+        }
+        resIntent.putExtra("lat",marker.position.latitude)
+        resIntent.putExtra("lon",marker.position.longitude)
 
         setResult(12,resIntent)
         finish()
+
         return true
     }
 
-    fun setMarkerOnStop(mMap: GoogleMap){
-        val name = intent.getStringExtra("name")
-        val lat = intent.getStringExtra("latitude")
-        val long = intent.getStringExtra("longitude")
-
-        Log.i("NAME",name)
-        Log.i("LATITUDE", lat)
-        Log.i("LONGITUDE",long)
-
-        if(lat!=null && long != null)
-            mMap.addMarker(MarkerOptions().position(LatLng(lat.toDouble(),long.toDouble())).title(name))
+    private fun createURL(origin: LatLng, directionMode: String, lat: Double, lon: Double): String{
+        val strOrigin = "origin=${origin.latitude},${origin.longitude}"
+        val strDestin = "destination=${lat},${lon}"
+        val mode = "mode=$directionMode"
+        val parameters = "$strOrigin&$strDestin&$mode"
+        val outputFormat = "json"
+        val url = "https://maps.googleapis.com/maps/api/directions/$outputFormat?$parameters&key=${resources.getString(R.string.google_maps_key)}"
+        return url
     }
+
+    private fun sendRequest(url: String){
+        val directionRequest = object : StringRequest(
+            Request.Method.GET,
+            url,
+            Response.Listener<String> {
+                    response ->
+                val path: MutableList<List<LatLng>> = ArrayList()
+                val jsonResponse =  JSONObject(response)
+
+                //Log.i("TEST",jsonResponse.toString())
+                try {
+                    val routes = jsonResponse.getJSONArray("routes")
+                    val legs = routes.getJSONObject(0).getJSONArray("legs")
+                    val steps = legs.getJSONObject(0).getJSONArray("steps")
+
+                    for (i in 0 until steps.length()) {
+                        val points =
+                            steps.getJSONObject(i).getJSONObject("polyline").getString("points")
+                        path.add(PolyUtil.decode(points))
+                    }
+
+                    for (i in 0 until path.size) {
+                        mMap.addPolyline(PolylineOptions().addAll(path[i]).color(Color.BLUE))
+                    }
+                }catch (e: Exception){
+                    Log.e("Error","It is impossible to reach hardcoded location from your position")
+                }
+            },
+            Response.ErrorListener {}
+        ){}
+
+        val requestQueue = Volley.newRequestQueue(this)
+        requestQueue.add(directionRequest)
+    }
+
 
 }
