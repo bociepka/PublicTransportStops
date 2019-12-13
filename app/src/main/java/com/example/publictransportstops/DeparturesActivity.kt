@@ -4,6 +4,9 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import androidx.core.app.NavUtils
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
@@ -14,6 +17,20 @@ import org.json.JSONObject
 
 class DeparturesActivity : AppCompatActivity() {
     var departuresList = mutableListOf<Departure>()
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_others, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId==android.R.id.home){
+            finish()
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_departures)
@@ -21,8 +38,9 @@ class DeparturesActivity : AppCompatActivity() {
         val stopName = intent.getStringExtra("name")
         title = stopName
         getDepartures(id)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        button2.setOnClickListener {
+        showWayButton.setOnClickListener {
             showWayToStop()
         }
     }

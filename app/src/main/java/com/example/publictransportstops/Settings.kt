@@ -8,14 +8,24 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NavUtils
 
 import kotlinx.android.synthetic.main.activity_settings.*
 import java.util.*
 
 class Settings : AppCompatActivity() {
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId==android.R.id.home){
+            finish()
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +33,7 @@ class Settings : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         actionBar?.setTitle(resources.getString(R.string.app_name))
-
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         buttonChangeLanguage.setOnClickListener {
             showChangeLanguageDialog()
         }

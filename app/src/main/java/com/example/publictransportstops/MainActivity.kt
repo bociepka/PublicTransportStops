@@ -9,6 +9,7 @@ import android.os.PersistableBundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.SearchView
 import androidx.core.app.ActivityCompat
 import com.android.volley.Request
@@ -31,11 +32,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         requestPermission()
-        button.setOnClickListener {
+        mapButton.setOnClickListener {
             startMapActivity()
-        }
-        settingsButton.setOnClickListener {
-            startSettings()
         }
 
         if (!isDataLoaded)
@@ -135,6 +133,13 @@ class MainActivity : AppCompatActivity() {
         filteredStopsList.addAll(nonFavouriteStops)
     }
 
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean { // Handle item selection
+        if (item.itemId == R.id.app_bar_settings){
+            startSettings()
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
