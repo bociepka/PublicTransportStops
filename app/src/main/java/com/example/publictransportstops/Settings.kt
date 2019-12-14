@@ -31,7 +31,7 @@ class Settings : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId==android.R.id.home){
             finish()
-            recreate()
+//            recreate()
         }
         return super.onOptionsItemSelected(item)
     }

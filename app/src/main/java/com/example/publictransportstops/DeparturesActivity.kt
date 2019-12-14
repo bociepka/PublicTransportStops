@@ -32,6 +32,9 @@ class DeparturesActivity : AppCompatActivity() {
         else if(item.itemId==R.id.app_bar_refresh){
             getDepartures(intent.getIntExtra("id", 1))
         }
+        else if (item.itemId==android.R.id.home){
+            finish()
+        }
 
         return super.onOptionsItemSelected(item)
     }

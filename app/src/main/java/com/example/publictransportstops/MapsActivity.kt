@@ -38,6 +38,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         if (item.itemId == R.id.app_bar_settings){
             startSettings()
         }
+        else if (item.itemId==android.R.id.home){
+            finish()
+        }
 
         return super.onOptionsItemSelected(item)
     }
