@@ -2,17 +2,19 @@ package com.example.publictransportstops
 
 import android.Manifest
 import android.app.Activity
-import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.location.Location
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.app.PendingIntent.getActivity
 import android.widget.Button
 import android.widget.SearchView
 import androidx.core.app.ActivityCompat
@@ -29,13 +31,17 @@ import java.util.*
 import kotlin.collections.ArrayList
 import com.example.publictransportstops.Settings as Settings1
 
-var stopsList = mutableListOf<Stop>()
+var stopsList = ArrayList<Stop>()
 var filteredStopsList = ArrayList<Stop>()
 var isDataLoaded = false
 var currentLangCode = String()
 
+
 class MainActivity : AppCompatActivity() {
+    var sortingType = "location"
     var searchQuery = ""
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loadLocale()
@@ -54,53 +60,50 @@ class MainActivity : AppCompatActivity() {
             getStops()
         else
             onStopsReady()
+
     }
 
 
     private fun onStopsReady() {
-        correctNames()
         filteredStopsList = ArrayList(stopsList)
-        var myAdapter = StopsAdapter(filteredStopsList)
+        val myAdapter = StopsAdapter(filteredStopsList)
         listView.adapter = myAdapter
         getFavourites()
-        sortStopsList()
+        sortStopsList(sortingType)
         myAdapter.notifyDataSetChanged()
     }
 
-    private fun correctNames() {
-        for (stop in stopsList) {
-            stop.name = stop.name.replace("Ä\u0084", "Ą")
-            stop.name = stop.name.replace("Ä\u0086", "Ć")
-            stop.name = stop.name.replace("Ä\u0098", "Ę")
-            stop.name = stop.name.replace("Å\u0081", "Ł")
-            stop.name = stop.name.replace("Å\u0083", "Ń")
-            stop.name = stop.name.replace("Ã\u0093", "Ó")
-            stop.name = stop.name.replace("Å\u009A", "Ś")
-            stop.name = stop.name.replace("Å\u00B9", "Ź")
-            stop.name = stop.name.replace("Å\u00BB", "Ż")
-            stop.name = stop.name.replace("Ä\u0085", "ą")
-            stop.name = stop.name.replace("Ä\u0087", "ć")
-            stop.name = stop.name.replace("Ä\u0099", "ę")
-            stop.name = stop.name.replace("Å\u0082", "ł")
-            stop.name = stop.name.replace("Å\u0084", "ń")
-            stop.name = stop.name.replace("Ã\u00B3", "ó")
-            stop.name = stop.name.replace("Å\u009B", "ś")
-            stop.name = stop.name.replace("Å\u00BA", "ź")
-            stop.name = stop.name.replace("Å\u00BC", "ż")
-            stop.name = stop.name.replace("Ã©", "é")
-        }
+    private fun correctName(name :String) : String{
+        return name.replace("Ä\u0084", "Ą")
+            .replace("Ä\u0086", "Ć")
+            .replace("Ä\u0098", "Ę")
+            .replace("Å\u0081", "Ł")
+            .replace("Å\u0083", "Ń")
+            .replace("Ã\u0093", "Ó")
+            .replace("Å\u009A", "Ś")
+            .replace("Å\u00B9", "Ź")
+            .replace("Å\u00BB", "Ż")
+            .replace("Ä\u0085", "ą")
+            .replace("Ä\u0087", "ć")
+            .replace("Ä\u0099", "ę")
+            .replace("Å\u0082", "ł")
+            .replace("Å\u0084", "ń")
+            .replace("Ã\u00B3", "ó")
+            .replace("Å\u009B", "ś")
+            .replace("Å\u00BA", "ź")
+            .replace("Å\u00BC", "ż")
+            .replace("Ã©", "é")
     }
 
 
     private fun getStops() {
         val url = "https://krakowpodreka.pl/pl/stops/positions/stops/?format=json"
-
         val directionsRequest =
             object : StringRequest(Request.Method.GET, url, Response.Listener<String> { response ->
                 val jsonResponse = JSONArray(response)
                 for (i in 0..jsonResponse.length() - 1) {
                     val currentStop = JSONObject(jsonResponse.get(i).toString())
-                    val name = currentStop.get("name").toString()
+                    val name = correctName(currentStop.get("name").toString())
                     val id = currentStop.get("id").toString().toInt()
                     val latitude = currentStop.get("latitude").toString().toDouble()
                     val longitude = currentStop.get("longitude").toString().toDouble()
@@ -124,14 +127,19 @@ class MainActivity : AppCompatActivity() {
         }
         var myAdapter = StopsAdapter(filteredStopsList)
         listView.adapter = myAdapter
-        sortStopsList()
+        sortStopsList(sortingType)
         myAdapter.notifyDataSetChanged()
     }
 
-    fun sortStopsList(){
+    fun sortStopsList(type : String){
         val favouriteStops = ArrayList<Stop>()
         val nonFavouriteStops = ArrayList<Stop>()
+        val myLocation = getCurrentLocation()
+        Log.i("Location","${myLocation?.latitude} ${myLocation?.longitude}")
         for (stop in filteredStopsList) {
+            if (myLocation != null){
+                stop.calculateDistance(myLocation.latitude,myLocation.longitude)
+            }
             if (stop.favourite) {
                 favouriteStops.add(stop)
             }
@@ -139,8 +147,16 @@ class MainActivity : AppCompatActivity() {
                 nonFavouriteStops.add(stop)
             }
         }
-        favouriteStops.sortBy{it.name}
-        nonFavouriteStops.sortBy { it.name }
+
+        if (type == "location"){
+
+            favouriteStops.sortBy { it.distance }
+            nonFavouriteStops.sortBy { it.distance }
+        }
+        else {
+            favouriteStops.sortBy { it.name }
+            nonFavouriteStops.sortBy { it.name }
+        }
         filteredStopsList.removeAll { true }
         filteredStopsList.addAll(favouriteStops)
         filteredStopsList.addAll(nonFavouriteStops)
@@ -304,7 +320,14 @@ class MainActivity : AppCompatActivity() {
         intent.putExtras(bundle)
         startActivityForResult(intent,12)
     }
-
+    private fun getCurrentLocation(): Location? {
+        val trackLocation = TrackLocation(this)
+        if(trackLocation.canGetLocation)
+            return trackLocation.location
+        else{
+            return null
+        }
+    }
     //load language
     fun loadLocale(){
         var prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE)
