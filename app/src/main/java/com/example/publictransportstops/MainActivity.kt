@@ -3,6 +3,7 @@ package com.example.publictransportstops
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -25,7 +26,9 @@ var stopsList = mutableListOf<Stop>()
 var filteredStopsList = ArrayList<Stop>()
 var isDataLoaded = false
 
+
 class MainActivity : AppCompatActivity() {
+    var sortingType = "location"
     var searchQuery = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,10 +50,10 @@ class MainActivity : AppCompatActivity() {
     private fun onStopsReady() {
         correctNames()
         filteredStopsList = ArrayList(stopsList)
-        var myAdapter = StopsAdapter(filteredStopsList)
+        val myAdapter = StopsAdapter(filteredStopsList)
         listView.adapter = myAdapter
         getFavourites()
-        sortStopsList()
+        sortStopsList(sortingType)
         myAdapter.notifyDataSetChanged()
     }
 
@@ -111,14 +114,19 @@ class MainActivity : AppCompatActivity() {
         }
         var myAdapter = StopsAdapter(filteredStopsList)
         listView.adapter = myAdapter
-        sortStopsList()
+        sortStopsList(sortingType)
         myAdapter.notifyDataSetChanged()
     }
 
-    fun sortStopsList(){
+    fun sortStopsList(type : String){
         val favouriteStops = ArrayList<Stop>()
         val nonFavouriteStops = ArrayList<Stop>()
+        val myLocation = getCurrentLocation()
+        Log.i("Location","${myLocation!!.latitude} ${myLocation.longitude}")
         for (stop in filteredStopsList) {
+            if (myLocation != null){
+                stop.calculateDistance(myLocation.latitude,myLocation.longitude)
+            }
             if (stop.favourite) {
                 favouriteStops.add(stop)
             }
@@ -126,8 +134,16 @@ class MainActivity : AppCompatActivity() {
                 nonFavouriteStops.add(stop)
             }
         }
-        favouriteStops.sortBy{it.name}
-        nonFavouriteStops.sortBy { it.name }
+
+        if (type == "location"){
+
+            favouriteStops.sortBy { it.distance }
+            nonFavouriteStops.sortBy { it.distance }
+        }
+        else {
+            favouriteStops.sortBy { it.name }
+            nonFavouriteStops.sortBy { it.name }
+        }
         filteredStopsList.removeAll { true }
         filteredStopsList.addAll(favouriteStops)
         filteredStopsList.addAll(nonFavouriteStops)
@@ -284,4 +300,15 @@ class MainActivity : AppCompatActivity() {
         intent.putExtras(bundle)
         startActivityForResult(intent,12)
     }
+
+    private fun getCurrentLocation(): Location? {
+        val trackLocation = TrackLocation(this)
+        if(trackLocation.canGetLocation)
+            return trackLocation.location
+        else{
+            return null
+        }
+    }
+
+
 }

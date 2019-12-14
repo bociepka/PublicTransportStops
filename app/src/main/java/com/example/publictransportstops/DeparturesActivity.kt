@@ -3,29 +3,28 @@ package com.example.publictransportstops
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import androidx.core.app.NavUtils
-import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_departures.*
-import org.json.JSONArray
 import org.json.JSONObject
 
 class DeparturesActivity : AppCompatActivity() {
     var departuresList = mutableListOf<Departure>()
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_others, menu)
+        menuInflater.inflate(R.menu.menu_departures, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId==android.R.id.home){
             finish()
+        }
+        else if(item.itemId==R.id.app_bar_refresh){
+            getDepartures(intent.getIntExtra("id", 1))
         }
 
         return super.onOptionsItemSelected(item)
