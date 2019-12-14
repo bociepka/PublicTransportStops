@@ -5,4 +5,7 @@
 
     <string name="languageInfo">Language:</string>
     <string name="buttonChangeLanguage">Change</string>
+
+    <string name="departure_time">Departure time:</string>
+    <string name="linedirection">Line/Direction:</string>
 </resources>

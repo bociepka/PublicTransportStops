@@ -1,8 +1,12 @@
 package com.example.publictransportstops
 
 import android.Manifest
+import android.app.Activity
+import android.app.PendingIntent.getActivity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -16,19 +20,29 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.google.android.gms.common.internal.DialogRedirect.getInstance
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
+import com.example.publictransportstops.Settings as Settings1
 
 var stopsList = mutableListOf<Stop>()
 var filteredStopsList = ArrayList<Stop>()
 var isDataLoaded = false
+var currentLangCode = String()
 
 class MainActivity : AppCompatActivity() {
     var searchQuery = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        loadLocale()
+        currentLangCode = getResources().getConfiguration().locale.getLanguage()
+
+        setTitle(resources.getString(R.string.app_name))  //reloading the title to language
+
         setContentView(R.layout.activity_main)
 
         requestPermission()
@@ -40,7 +54,6 @@ class MainActivity : AppCompatActivity() {
             getStops()
         else
             onStopsReady()
-
     }
 
 
@@ -180,6 +193,13 @@ class MainActivity : AppCompatActivity() {
 //        getFavourites()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(!currentLangCode.equals(getResources().getConfiguration().locale.getLanguage())){
+            currentLangCode = getResources().getConfiguration().locale.getLanguage()
+            recreate()
+        }
+    }
 
     fun saveFavourites(){
         val file : File = File(this.filesDir, "favourites.txt")
@@ -279,9 +299,26 @@ class MainActivity : AppCompatActivity() {
     /* SETTINGS */
 
     fun startSettings(){
-        val intent = Intent(this, Settings::class.java)
+        val intent = Intent(this, Settings1::class.java)
         val bundle = Bundle()
         intent.putExtras(bundle)
         startActivityForResult(intent,12)
+    }
+
+    //load language
+    fun loadLocale(){
+        var prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE)
+        var language = prefs.getString("My lang", "")
+        setLocale(language!!)
+    }
+    private fun setLocale(lang: String) {
+        var locale = Locale(lang)
+        Locale.setDefault(locale)
+        var config = Configuration()
+        config.locale = locale
+        baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
+        var editor = getSharedPreferences("Settings", Context.MODE_PRIVATE).edit()
+        editor.putString("My lang", lang)
+        editor.apply()
     }
 }

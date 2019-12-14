@@ -28,6 +28,7 @@ import org.json.JSONObject
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
+    var currentLangCode = String()
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_others, menu)
@@ -35,8 +36,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId==android.R.id.home){
-            finish()
+        if (item.itemId == R.id.app_bar_settings){
+            startSettings()
         }
 
         return super.onOptionsItemSelected(item)
@@ -45,6 +46,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
+
+        currentLangCode = getResources().getConfiguration().locale.getLanguage();
+        setTitle(resources.getString(R.string.title_activity_maps))  //reloading the title to language
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         createMapAndMarkMyLocation()
@@ -172,5 +176,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         requestQueue.add(directionRequest)
     }
 
+    fun startSettings(){
+        val intent = Intent(this, Settings::class.java)
+        val bundle = Bundle()
+        intent.putExtras(bundle)
+        startActivityForResult(intent,12)
+    }
 
+    override fun onResume() {
+        super.onResume()
+        if(!currentLangCode.equals(getResources().getConfiguration().locale.getLanguage())){
+            currentLangCode = getResources().getConfiguration().locale.getLanguage()
+            recreate()
+        }
+    }
 }

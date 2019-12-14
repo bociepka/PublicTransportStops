@@ -20,7 +20,7 @@
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
             app:contentInsetStart="8dp"
-            app:title="Line/Direction" />
+            app:title="@string/linedirection" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar5"
@@ -31,7 +31,7 @@
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
             app:contentInsetStart="8dp"
-            app:title="Departure time"
+            app:title="@string/departure_time"
             app:titleMargin="4dp" />
     </LinearLayout>
 

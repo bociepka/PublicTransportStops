@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Public Transport Stops</string>
+    <string name="app_name">остановки общественного транспорта</string>
     <string name="buttonChangeLanguage">смени</string>
     <string name="languageInfo">язык:</string>
     <string name="title_activity_maps">карта</string>
     <string name="title_activity_settings">настройки</string>
+    <string name="linedirection">Линия/направление:</string>
+    <string name="departure_time">Время отправления:</string>
 </resources>

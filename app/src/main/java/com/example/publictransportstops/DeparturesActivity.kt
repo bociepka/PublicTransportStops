@@ -1,6 +1,9 @@
 package com.example.publictransportstops
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -14,9 +17,12 @@ import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_departures.*
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.*
+import kotlin.collections.ArrayList
 
 class DeparturesActivity : AppCompatActivity() {
     var departuresList = mutableListOf<Departure>()
+    var currentLangCode = String()
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_others, menu)
@@ -24,8 +30,8 @@ class DeparturesActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId==android.R.id.home){
-            finish()
+        if (item.itemId == R.id.app_bar_settings){
+            startSettings()
         }
 
         return super.onOptionsItemSelected(item)
@@ -34,6 +40,9 @@ class DeparturesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_departures)
+
+        currentLangCode = getResources().getConfiguration().locale.getLanguage()
+        loadLocale()
         val id = intent.getIntExtra("id", 1)
         val stopName = intent.getStringExtra("name")
         title = stopName
@@ -93,4 +102,34 @@ class DeparturesActivity : AppCompatActivity() {
 
     }
 
+    //load language
+    fun loadLocale(){
+        var prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE)
+        var language = prefs.getString("My lang", "")
+        setLocale(language!!)
+    }
+    private fun setLocale(lang: String) {
+        var locale = Locale(lang)
+        Locale.setDefault(locale)
+        var config = Configuration()
+        config.locale = locale
+        baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
+        var editor = getSharedPreferences("Settings", Context.MODE_PRIVATE).edit()
+        editor.putString("My lang", lang)
+        editor.apply()
+    }
+    override fun onResume() {
+        super.onResume()
+        if(!currentLangCode.equals(getResources().getConfiguration().locale.getLanguage())){
+            currentLangCode = getResources().getConfiguration().locale.getLanguage()
+            recreate()
+        }
+    }
+
+    fun startSettings(){
+        val intent = Intent(this, Settings::class.java)
+        val bundle = Bundle()
+        intent.putExtras(bundle)
+        startActivityForResult(intent,12)
+    }
 }
