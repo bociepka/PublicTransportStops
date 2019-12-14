@@ -1,9 +1,11 @@
 package com.example.publictransportstops
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -22,7 +24,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 
-var stopsList = mutableListOf<Stop>()
+var stopsList = ArrayList<Stop>()
 var filteredStopsList = ArrayList<Stop>()
 var isDataLoaded = false
 
@@ -30,6 +32,8 @@ var isDataLoaded = false
 class MainActivity : AppCompatActivity() {
     var sortingType = "location"
     var searchQuery = ""
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -48,7 +52,6 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun onStopsReady() {
-        correctNames()
         filteredStopsList = ArrayList(stopsList)
         val myAdapter = StopsAdapter(filteredStopsList)
         listView.adapter = myAdapter
@@ -57,40 +60,37 @@ class MainActivity : AppCompatActivity() {
         myAdapter.notifyDataSetChanged()
     }
 
-    private fun correctNames() {
-        for (stop in stopsList) {
-            stop.name = stop.name.replace("Ä\u0084", "Ą")
-            stop.name = stop.name.replace("Ä\u0086", "Ć")
-            stop.name = stop.name.replace("Ä\u0098", "Ę")
-            stop.name = stop.name.replace("Å\u0081", "Ł")
-            stop.name = stop.name.replace("Å\u0083", "Ń")
-            stop.name = stop.name.replace("Ã\u0093", "Ó")
-            stop.name = stop.name.replace("Å\u009A", "Ś")
-            stop.name = stop.name.replace("Å\u00B9", "Ź")
-            stop.name = stop.name.replace("Å\u00BB", "Ż")
-            stop.name = stop.name.replace("Ä\u0085", "ą")
-            stop.name = stop.name.replace("Ä\u0087", "ć")
-            stop.name = stop.name.replace("Ä\u0099", "ę")
-            stop.name = stop.name.replace("Å\u0082", "ł")
-            stop.name = stop.name.replace("Å\u0084", "ń")
-            stop.name = stop.name.replace("Ã\u00B3", "ó")
-            stop.name = stop.name.replace("Å\u009B", "ś")
-            stop.name = stop.name.replace("Å\u00BA", "ź")
-            stop.name = stop.name.replace("Å\u00BC", "ż")
-            stop.name = stop.name.replace("Ã©", "é")
-        }
+    private fun correctName(name :String) : String{
+        return name.replace("Ä\u0084", "Ą")
+            .replace("Ä\u0086", "Ć")
+            .replace("Ä\u0098", "Ę")
+            .replace("Å\u0081", "Ł")
+            .replace("Å\u0083", "Ń")
+            .replace("Ã\u0093", "Ó")
+            .replace("Å\u009A", "Ś")
+            .replace("Å\u00B9", "Ź")
+            .replace("Å\u00BB", "Ż")
+            .replace("Ä\u0085", "ą")
+            .replace("Ä\u0087", "ć")
+            .replace("Ä\u0099", "ę")
+            .replace("Å\u0082", "ł")
+            .replace("Å\u0084", "ń")
+            .replace("Ã\u00B3", "ó")
+            .replace("Å\u009B", "ś")
+            .replace("Å\u00BA", "ź")
+            .replace("Å\u00BC", "ż")
+            .replace("Ã©", "é")
     }
 
 
     private fun getStops() {
         val url = "https://krakowpodreka.pl/pl/stops/positions/stops/?format=json"
-
         val directionsRequest =
             object : StringRequest(Request.Method.GET, url, Response.Listener<String> { response ->
                 val jsonResponse = JSONArray(response)
                 for (i in 0..jsonResponse.length() - 1) {
                     val currentStop = JSONObject(jsonResponse.get(i).toString())
-                    val name = currentStop.get("name").toString()
+                    val name = correctName(currentStop.get("name").toString())
                     val id = currentStop.get("id").toString().toInt()
                     val latitude = currentStop.get("latitude").toString().toDouble()
                     val longitude = currentStop.get("longitude").toString().toDouble()
@@ -122,7 +122,7 @@ class MainActivity : AppCompatActivity() {
         val favouriteStops = ArrayList<Stop>()
         val nonFavouriteStops = ArrayList<Stop>()
         val myLocation = getCurrentLocation()
-        Log.i("Location","${myLocation!!.latitude} ${myLocation.longitude}")
+        Log.i("Location","${myLocation?.latitude} ${myLocation?.longitude}")
         for (stop in filteredStopsList) {
             if (myLocation != null){
                 stop.calculateDistance(myLocation.latitude,myLocation.longitude)
