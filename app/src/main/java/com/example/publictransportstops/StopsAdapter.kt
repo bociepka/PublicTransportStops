@@ -25,8 +25,11 @@ class StopsAdapter (var objects: ArrayList<Stop>) : BaseAdapter() {
         val checkBox : CheckBox = view.findViewById<CheckBox>(R.id.favourite)
         checkBox.isChecked = objects.get(position).favourite
         checkBox.setOnClickListener{
-            val index = stopsList.indexOf(objects[position])
-            stopsList[index].favourite = checkBox.isChecked
+            val db = LocalDbClient.getDatabase(parent!!.context)
+            val index = objects[position].id
+            val stop = db?.getStopsDAO()?.getStopById(index)
+            stop?.favourite = checkBox.isChecked
+            db?.getStopsDAO()?.insertStops(stop!!)
             Log.i("TAG","${index.toString()} is now ${checkBox.isChecked}")
         }
 

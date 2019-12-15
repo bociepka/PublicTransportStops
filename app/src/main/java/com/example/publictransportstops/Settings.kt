@@ -75,10 +75,12 @@ class Settings : AppCompatActivity() {
         removeDataButton.setOnClickListener{
             val sharedPreferences = this.getSharedPreferences("SharedPref",Context.MODE_PRIVATE)
             sharedPreferences.edit().remove("sortingType").apply();
-            File(this.filesDir, "favourites.txt").writeText("")
-            for(stop in stopsList){
-                stop.favourite = false
-            }
+//            File(this.filesDir, "favourites.txt").writeText("")
+//            for(stop in stopsList){
+//                stop.favourite = false
+//            }
+            val db = LocalDbClient.getDatabase(this)
+            db!!.clearAllTables()
             val text = R.string.data_removed
             val duration = Toast.LENGTH_SHORT
             val toast = Toast.makeText(applicationContext, text, duration)

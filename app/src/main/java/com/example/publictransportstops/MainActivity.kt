@@ -31,9 +31,9 @@ import java.util.*
 import kotlin.collections.ArrayList
 import com.example.publictransportstops.Settings as Settings1
 
-var stopsList = ArrayList<Stop>()
+//var stopsList = ArrayList<Stop>()
 var filteredStopsList = ArrayList<Stop>()
-var isDataLoaded = false
+//var isDataLoaded = false
 var currentLangCode = String()
 
 
@@ -66,11 +66,12 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun onStopsReady() {
-        stopsList.removeAll{true}
+        filteredStopsList.removeAll{true}
+//        stopsList.removeAll{true}
         for(i in db!!.getStopsDAO().loadAllStops()){
-            stopsList.add(i)
+            filteredStopsList.add(i)
         }
-        filteredStopsList = ArrayList(stopsList)
+//        filteredStopsList = ArrayList(stopsList)
         val myAdapter = StopsAdapter(filteredStopsList)
         listView.adapter = myAdapter
         getFavourites()
@@ -116,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                     val stop = Stop(id, name, latitude, longitude)
                     db.getStopsDAO().insertStops(stop)
                 }
-                isDataLoaded = true
+//                isDataLoaded = true
                 onStopsReady()
             }, Response.ErrorListener {
             }) {}
@@ -174,27 +175,29 @@ class MainActivity : AppCompatActivity() {
         }
         else if(item.itemId == R.id.app_bar_sort_distance){
             sortingType = "location"
-            sortStopsList(sortingType)
-            val myAdapter = StopsAdapter(filteredStopsList)
-            listView.adapter = myAdapter
-            myAdapter.notifyDataSetChanged()
+//            sortStopsList(sortingType)
+//            val myAdapter = StopsAdapter(filteredStopsList)
+//            listView.adapter = myAdapter
+//            myAdapter.notifyDataSetChanged()
             val sharedPref = this.getSharedPreferences("SharedPref",Context.MODE_PRIVATE)
             with(sharedPref.edit()){
                 putString("sortingType", sortingType)
                 apply()
             }
+            onStopsReady()
         }
         else if(item.itemId == R.id.app_bar_sort_name){
             sortingType = "name"
-            sortStopsList(sortingType)
-            val myAdapter = StopsAdapter(filteredStopsList)
-            listView.adapter = myAdapter
-            myAdapter.notifyDataSetChanged()
+//            sortStopsList(sortingType)
+//            val myAdapter = StopsAdapter(filteredStopsList)
+//            listView.adapter = myAdapter
+//            myAdapter.notifyDataSetChanged()
             val sharedPref = this.getSharedPreferences("SharedPref",Context.MODE_PRIVATE)
             with(sharedPref.edit()){
                 putString("sortingType", sortingType)
                 apply()
             }
+            onStopsReady()
         }
 
         return super.onOptionsItemSelected(item)
@@ -252,48 +255,51 @@ class MainActivity : AppCompatActivity() {
             currentLangCode = getResources().getConfiguration().locale.getLanguage()
             recreate()
         }
+        if (db.getStopsDAO().loadAllStops().isEmpty()){
+            getStops()
+        }
     }
 
     fun saveFavourites(){
-        val file : File = File(this.filesDir, "favourites.txt")
-        file.writeText("")
-        for ((index, stop) in stopsList.withIndex()){
-            if(stop.favourite){
-                file.appendText("$index,")
-            }
-        }
+//        val file : File = File(this.filesDir, "favourites.txt")
+//        file.writeText("")
+//        for ((index, stop) in stopsList.withIndex()){
+//            if(stop.favourite){
+//                file.appendText("$index,")
+//            }
+//        }
     }
 
     fun getFavourites() {
-        val file : File = File(this.filesDir, "favourites.txt")
-        var favourites: String = ""
-        try {
-            favourites = file.readText()
-        }catch(e: Exception){
-
-        }
-        Log.i("TAG","String read")
-        Log.i("TAG",favourites)
-        var list : List<String> = favourites.split(',')
-        Log.i("TAG","String splitted")
-        for (favourite in list){
-            Log.i("TAG","$favourite")
-            if(favourite.toIntOrNull()!=null)
-            stopsList[favourite.toInt()].favourite = true
-            else{
-                file.writeText("")
-            }
-        }
-        Log.i("TAG","Favourites added")
+//        val file : File = File(this.filesDir, "favourites.txt")
+//        var favourites: String = ""
+//        try {
+//            favourites = file.readText()
+//        }catch(e: Exception){
+//
+//        }
+//        Log.i("TAG","String read")
+//        Log.i("TAG",favourites)
+//        var list : List<String> = favourites.split(',')
+//        Log.i("TAG","String splitted")
+//        for (favourite in list){
+//            Log.i("TAG","$favourite")
+//            if(favourite.toIntOrNull()!=null)
+//            stopsList[favourite.toInt()].favourite = true
+//            else{
+//                file.writeText("")
+//            }
+//        }
+//        Log.i("TAG","Favourites added")
 //        Log.i("TAG",favourites)
     }
     /* MAP ACTIVITY */
 
     fun startMapActivity(){
-        db = LocalDbClient.getDatabase(this)!!
-        for(stop in stopsList) {
-            db.getStopsDAO().insertStops(stop)
-        }
+//        db = LocalDbClient.getDatabase(this)!!
+//        for(stop in stopsList) {
+//            db.getStopsDAO().insertStops(stop)
+//        }
         if(requestPermission()){
             val intent = Intent(this, MapsActivity::class.java)
 //            val bundle = Bundle()
