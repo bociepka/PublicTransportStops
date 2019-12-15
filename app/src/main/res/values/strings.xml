@@ -13,4 +13,7 @@
 
     <string name="departure_time">Departure time:</string>
     <string name="linedirection">Line/Direction:</string>
+
+    <string name="sort_by_distance">Sort by distance</string>
+    <string name="sort_by_name">Sort by name</string>
 </resources>

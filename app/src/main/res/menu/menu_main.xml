@@ -12,4 +12,12 @@
         android:icon="@drawable/ic_settings_black_24dp"
         android:title="Item"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/app_bar_sort_distance"
+        android:title="@string/sort_by_distance"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/app_bar_sort_name"
+        android:title="@string/sort_by_name"
+        app:showAsAction="never" />
 </menu>

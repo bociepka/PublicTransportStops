@@ -12,4 +12,6 @@
     <string name="textOn">это</string>
     <string name="biggerFont">Прописные буквы:</string>
     <string name="colorblindMode">Высокая контрастность:</string>
+    <string name="sort_by_distance">Сортировать по расстоянию</string>
+    <string name="sort_by_name">Сортировать по имени</string>
 </resources>

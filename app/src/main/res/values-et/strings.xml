@@ -12,4 +12,6 @@
     <string name="title_activity_settings">Seadistused</string>
     <string name="textOff">Off</string>
     <string name="textOn">On</string>
+    <string name="sort_by_name">Sorteeri nime</string>
+    <string name="sort_by_distance">Sorteeri kaugus</string>
 </resources>

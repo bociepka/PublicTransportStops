@@ -12,4 +12,6 @@
     <string name="colorblindMode">Hoher Kontrast:</string>
     <string name="biggerFont">Großbuchstaben:</string>
     <string name="nightMode">Nachtmodus:</string>
+    <string name="sort_by_distance">Nach Entfernung sortieren</string>
+    <string name="sort_by_name">Nach Name sortieren</string>
 </resources>

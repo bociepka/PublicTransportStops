@@ -12,4 +12,6 @@
     <string name="nightMode">Tryb nocny:</string>
     <string name="colorblindMode">Wysoki kontrast:</string>
     <string name="biggerFont">Duże litery:</string>
+    <string name="sort_by_name">Sortuj wg nazwy</string>
+    <string name="sort_by_distance">Sortuj wg odległości</string>
 </resources>

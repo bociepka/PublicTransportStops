@@ -43,6 +43,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+        sortingType = sharedPref.getString("sortingType", "name") as String
         loadLocale()
         currentLangCode = getResources().getConfiguration().locale.getLanguage()
         setTitle(resources.getString(R.string.app_name))  //reloading the title to language
@@ -164,6 +166,31 @@ class MainActivity : AppCompatActivity() {
         if (item.itemId == R.id.app_bar_settings){
             startSettings()
         }
+        else if(item.itemId == R.id.app_bar_sort_distance){
+            sortingType = "location"
+            sortStopsList(sortingType)
+            val myAdapter = StopsAdapter(filteredStopsList)
+            listView.adapter = myAdapter
+            myAdapter.notifyDataSetChanged()
+            val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+            with(sharedPref.edit()){
+                putString("sortingType", sortingType)
+                commit()
+            }
+        }
+        else if(item.itemId == R.id.app_bar_sort_name){
+            sortingType = "name"
+            sortStopsList(sortingType)
+            val myAdapter = StopsAdapter(filteredStopsList)
+            listView.adapter = myAdapter
+            myAdapter.notifyDataSetChanged()
+            val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+            with(sharedPref.edit()){
+                putString("sortingType", sortingType)
+                commit()
+            }
+        }
+
         return super.onOptionsItemSelected(item)
     }
 
@@ -196,10 +223,10 @@ class MainActivity : AppCompatActivity() {
         outState.putString("search", searchQuery)
         super.onSaveInstanceState(outState)
         saveFavourites()
+
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-
         searchQuery = savedInstanceState.getString("search").toString()
         filterOutput(searchQuery)
         super.onRestoreInstanceState(savedInstanceState)
