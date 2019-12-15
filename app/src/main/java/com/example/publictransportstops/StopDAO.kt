@@ -13,4 +13,7 @@ interface StopDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertStops(vararg recipes: Stop)
+
+    @Query("SELECT * FROM stop WHERE name LIKE :query")
+    fun filterStops(query :String):Array<Stop>
 }

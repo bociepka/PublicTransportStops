@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun onStopsReady() {
-//        stopsList.removeAll{true}
+        stopsList.removeAll{true}
         for(i in db!!.getStopsDAO().loadAllStops()){
             stopsList.add(i)
         }
@@ -126,10 +126,9 @@ class MainActivity : AppCompatActivity() {
 
     fun filterOutput(query: String) {
         filteredStopsList = ArrayList()
-        for (stop in stopsList) {
-            if (stop.name.toLowerCase().contains(query.toLowerCase())) {
-                filteredStopsList.add(stop)
-            }
+
+        for(i in db.getStopsDAO().filterStops("%$query%")){
+            filteredStopsList.add(i)
         }
         var myAdapter = StopsAdapter(filteredStopsList)
         listView.adapter = myAdapter
