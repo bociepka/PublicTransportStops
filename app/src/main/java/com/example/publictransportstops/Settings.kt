@@ -9,22 +9,14 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NavUtils
-
 import kotlinx.android.synthetic.main.activity_settings.*
 import java.util.*
-import android.widget.Toast
-import androidx.core.app.ComponentActivity
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
-
+import android.widget.Switch
+import android.view.WindowManager
 
 class Settings : AppCompatActivity() {
 
@@ -46,11 +38,45 @@ class Settings : AppCompatActivity() {
         buttonChangeLanguage.setOnClickListener {
             showChangeLanguageDialog()
         }
+        var switchBigger = findViewById<Switch>(R.id.switchBigger)
+        var switchColorblind = findViewById<Switch>(R.id.switchColorblind)
+        var switchNight = findViewById<Switch>(R.id.switchNight)
+        var editor = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        var night = editor.getString("Night", "false")
+        var bigger = editor.getString("Bigger", "false")
+        var colorblind = editor.getString("ColorBlind", "false")
+        if (night=="true"){
+            switchNight.setChecked(true)
+        }
+        if (bigger=="true"){
+            switchBigger.setChecked(true)
+        }
+        if (colorblind=="true"){
+            switchColorblind.setChecked(true)
+        }
+        switchBigger.setOnCheckedChangeListener { buttonView, isChecked ->
+            var editor = getSharedPreferences("Settings", Context.MODE_PRIVATE).edit()
+            editor.putString("Bigger", isChecked.toString())
+            editor.apply()
+        }
+        switchColorblind.setOnCheckedChangeListener { buttonView, isChecked ->
+            var editor = getSharedPreferences("Settings", Context.MODE_PRIVATE).edit()
+            editor.putString("ColorBlind", isChecked.toString())
+            editor.apply()
+        }
+        switchNight.setOnCheckedChangeListener { buttonView, isChecked ->
+            var editor = getSharedPreferences("Settings", Context.MODE_PRIVATE).edit()
+            editor.putString("Night", isChecked.toString())
+            editor.apply()
+        }
+        currentLangCode = getResources().getConfiguration().locale.getLanguage()
+        currentLangCode += "2"
+        setLocale(currentLangCode)
     }
 
     private fun showChangeLanguageDialog() {
         lateinit var dialog:AlertDialog
-        var listItems = arrayOf("English", "Deutsch", "Polski", "русский")
+        var listItems = arrayOf("English", "Deutsch", "Polski", "русский", "Eesti keel")
         var mBuilder = AlertDialog.Builder(this)
         mBuilder.setTitle("Choose language...")
         mBuilder.setSingleChoiceItems(listItems, -1,
@@ -68,6 +94,9 @@ class Settings : AppCompatActivity() {
                 } else if (item==3){
                     setLocale("ru")
                     recreate()
+                } else if (item==4){
+                    setLocale("et")
+                    recreate()
                 }
                 dialog.dismiss()
             })
@@ -82,7 +111,6 @@ class Settings : AppCompatActivity() {
         config.locale = locale
         baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
         var editor = getSharedPreferences("Settings", Context.MODE_PRIVATE).edit()
-        Log.i("jezyk", "ustawiono" + lang)
         editor.putString("My lang", lang)
         editor.apply()
     }
@@ -92,6 +120,23 @@ class Settings : AppCompatActivity() {
         var prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE)
         var language = prefs.getString("My lang", "")
         setLocale(language!!)
+        var bigger = prefs.getString("Bigger", "false")
+        if (bigger=="true"){
+            adjustFontScale(resources.configuration, 2.5f)
+        } else {
+            adjustFontScale(resources.configuration, 1.5f)
+        }
+        var colorblind = prefs.getString("ColorBlind", "false")
+        var night = prefs.getString("Night", "false")
+        if (colorblind=="true" && night=="true"){
+            setTheme(R.style.AppThemeHighContrast)
+        } else if (colorblind=="true"){
+            setTheme(R.style.AppThemeHighContrast)
+        } else if (night=="true"){
+            setTheme(R.style.AppThemeNight)
+        } else {
+            setTheme(R.style.AppTheme)
+        }
     }
 
     fun getFlag(){
@@ -106,8 +151,16 @@ class Settings : AppCompatActivity() {
             flagPlace.setImageDrawable(getDrawable(R.drawable.ru))
         } else if (language=="pl"){
             flagPlace.setImageDrawable(getDrawable(R.drawable.pl))
-        } else if (language=="ee") {
+        } else if (language=="et") {
             flagPlace.setImageDrawable(getDrawable(R.drawable.ee))
         }
+    }
+    fun adjustFontScale(configuration: Configuration, scale: Float) {
+        configuration.fontScale = scale
+        val metrics = resources.displayMetrics
+        val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        wm.defaultDisplay.getMetrics(metrics)
+        metrics.scaledDensity = configuration.fontScale * metrics.density
+        baseContext.resources.updateConfiguration(configuration, metrics)
     }
 }

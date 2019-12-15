@@ -14,7 +14,7 @@ import android.os.PersistableBundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.app.PendingIntent.getActivity
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.SearchView
 import androidx.core.app.ActivityCompat
@@ -41,14 +41,11 @@ class MainActivity : AppCompatActivity() {
     var sortingType = "location"
     var searchQuery = ""
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loadLocale()
         currentLangCode = getResources().getConfiguration().locale.getLanguage()
-
         setTitle(resources.getString(R.string.app_name))  //reloading the title to language
-
         setContentView(R.layout.activity_main)
 
         requestPermission()
@@ -211,7 +208,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if(!currentLangCode.equals(getResources().getConfiguration().locale.getLanguage())){
+        loadLocale()
+        var tempLangCode = getResources().getConfiguration().locale.getLanguage()
+        if (tempLangCode.contains('2')){
+            var newTempLang = tempLangCode.take(2)
+            setLocale(newTempLang)
+            recreate()
+        }
+        else if(!currentLangCode.equals(getResources().getConfiguration().locale.getLanguage())){
             currentLangCode = getResources().getConfiguration().locale.getLanguage()
             recreate()
         }
@@ -328,11 +332,28 @@ class MainActivity : AppCompatActivity() {
             return null
         }
     }
-    //load language
+    //load language and adjust motive
     fun loadLocale(){
         var prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE)
         var language = prefs.getString("My lang", "")
         setLocale(language!!)
+        var bigger = prefs.getString("Bigger", "false")
+        if (bigger=="true"){
+            adjustFontScale(resources.configuration, 2.5f)
+        } else {
+            adjustFontScale(resources.configuration, 1.5f)
+        }
+        var colorblind = prefs.getString("ColorBlind", "false")
+        var night = prefs.getString("Night", "false")
+        if (colorblind=="true" && night=="true"){
+            this.setTheme(R.style.AppThemeHighContrast)
+        } else if (colorblind=="true"){
+            this.setTheme(R.style.AppThemeHighContrast)
+        } else if (night=="true"){
+            this.setTheme(R.style.AppThemeNight)
+        } else {
+            this.setTheme(R.style.AppTheme)
+        }
     }
     private fun setLocale(lang: String) {
         var locale = Locale(lang)
@@ -343,5 +364,13 @@ class MainActivity : AppCompatActivity() {
         var editor = getSharedPreferences("Settings", Context.MODE_PRIVATE).edit()
         editor.putString("My lang", lang)
         editor.apply()
+    }
+    fun adjustFontScale(configuration: Configuration, scale: Float) {
+        configuration.fontScale = scale
+        val metrics = resources.displayMetrics
+        val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        wm.defaultDisplay.getMetrics(metrics)
+        metrics.scaledDensity = configuration.fontScale * metrics.density
+        baseContext.resources.updateConfiguration(configuration, metrics)
     }
 }

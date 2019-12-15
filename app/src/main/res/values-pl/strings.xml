@@ -7,4 +7,9 @@
     <string name="title_activity_settings">Ustawienia</string>
     <string name="departure_time">Czas odjazdu:</string>
     <string name="linedirection">Linia/Kierunek:</string>
+    <string name="textOff">Wył.</string>
+    <string name="textOn">Wł.</string>
+    <string name="nightMode">Tryb nocny:</string>
+    <string name="colorblindMode">Wysoki kontrast:</string>
+    <string name="biggerFont">Duże litery:</string>
 </resources>

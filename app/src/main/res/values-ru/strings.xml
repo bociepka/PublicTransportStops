@@ -7,4 +7,9 @@
     <string name="title_activity_settings">настройки</string>
     <string name="linedirection">Линия/направление:</string>
     <string name="departure_time">Время отправления:</string>
+    <string name="nightMode">Ночной режим:</string>
+    <string name="textOff">от</string>
+    <string name="textOn">это</string>
+    <string name="biggerFont">Прописные буквы:</string>
+    <string name="colorblindMode">Высокая контрастность:</string>
 </resources>

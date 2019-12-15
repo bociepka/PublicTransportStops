@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ühistranspordi peatused</string>
+    <string name="colorblindMode">Suur kontrast:</string>
+    <string name="buttonChangeLanguage">Muuta</string>
+    <string name="biggerFont">Suured tähed:</string>
+    <string name="departure_time">Väljumisaeg:</string>
+    <string name="languageInfo">Keel:</string>
+    <string name="linedirection">Liin / suund:</string>
+    <string name="nightMode">Öine režiim:</string>
+    <string name="title_activity_maps">Kaart</string>
+    <string name="title_activity_settings">Seadistused</string>
+    <string name="textOff">Off</string>
+    <string name="textOn">On</string>
+</resources>

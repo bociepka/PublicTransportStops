@@ -7,6 +7,28 @@
     android:layout_height="match_parent"
     tools:context=".Settings" >
 
+    <Switch
+        android:id="@+id/switchBigger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="16dp"
+        android:text=""
+        android:textOff="@string/textOff"
+        android:textOn="@string/textOn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/languageInfo" />
+
+    <Switch
+        android:id="@+id/switchColorblind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switchBigger" />
+
     <TextView
         android:id="@+id/languageInfo"
         android:layout_width="wrap_content"
@@ -14,7 +36,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="18dp"
         android:text="@string/languageInfo"
-        android:textSize="22sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,6 +45,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="50dp"
+        android:background="#000000"
+        android:padding="1dp"
         app:layout_constraintEnd_toStartOf="@+id/buttonChangeLanguage"
         app:layout_constraintStart_toEndOf="@+id/languageInfo"
         app:layout_constraintTop_toTopOf="parent"
@@ -38,4 +61,44 @@
         android:text="@string/buttonChangeLanguage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/biggerFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/biggerFont"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/languageInfo" />
+
+    <TextView
+        android:id="@+id/nightmode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/nightMode"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/colorblind" />
+
+    <TextView
+        android:id="@+id/colorblind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/colorblindMode"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/biggerFont" />
+
+    <Switch
+        android:id="@+id/switchNight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switchColorblind" />
 </androidx.constraintlayout.widget.ConstraintLayout>

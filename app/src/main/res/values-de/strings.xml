@@ -7,4 +7,9 @@
     <string name="title_activity_maps">Karte</string>
     <string name="linedirection">Linie/Kurs:</string>
     <string name="departure_time">Abfahrtszeit:</string>
+    <string name="textOn">Auf</string>
+    <string name="textOff">Aus</string>
+    <string name="colorblindMode">Hoher Kontrast:</string>
+    <string name="biggerFont">Großbuchstaben:</string>
+    <string name="nightMode">Nachtmodus:</string>
 </resources>

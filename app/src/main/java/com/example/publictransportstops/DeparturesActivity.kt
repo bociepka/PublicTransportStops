@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -31,6 +32,8 @@ class DeparturesActivity : AppCompatActivity() {
         }
         else if(item.itemId==R.id.app_bar_refresh){
             getDepartures(intent.getIntExtra("id", 1))
+        } else if (item.itemId == R.id.home){
+            finish()
         }
 
         return super.onOptionsItemSelected(item)
@@ -106,6 +109,23 @@ class DeparturesActivity : AppCompatActivity() {
         var prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE)
         var language = prefs.getString("My lang", "")
         setLocale(language!!)
+        var bigger = prefs.getString("Bigger", "false")
+        if (bigger=="true"){
+            adjustFontScale(resources.configuration, 2.5f)
+        } else {
+            adjustFontScale(resources.configuration, 1.5f)
+        }
+        var colorblind = prefs.getString("ColorBlind", "false")
+        var night = prefs.getString("Night", "false")
+        if (colorblind=="true" && night=="true"){
+            this.setTheme(R.style.AppThemeHighContrast)
+        } else if (colorblind=="true"){
+            this.setTheme(R.style.AppThemeHighContrast)
+        } else if (night=="true"){
+            this.setTheme(R.style.AppThemeNight)
+        } else {
+            this.setTheme(R.style.AppTheme)
+        }
     }
     private fun setLocale(lang: String) {
         var locale = Locale(lang)
@@ -119,7 +139,14 @@ class DeparturesActivity : AppCompatActivity() {
     }
     override fun onResume() {
         super.onResume()
-        if(!currentLangCode.equals(getResources().getConfiguration().locale.getLanguage())){
+        loadLocale()
+        var tempLangCode = getResources().getConfiguration().locale.getLanguage()
+        if (tempLangCode.contains('2')){
+            var newTempLang = tempLangCode.take(2)
+            setLocale(newTempLang)
+            recreate()
+        }
+        else if(!currentLangCode.equals(getResources().getConfiguration().locale.getLanguage())){
             currentLangCode = getResources().getConfiguration().locale.getLanguage()
             recreate()
         }
@@ -130,5 +157,13 @@ class DeparturesActivity : AppCompatActivity() {
         val bundle = Bundle()
         intent.putExtras(bundle)
         startActivityForResult(intent,12)
+    }
+    fun adjustFontScale(configuration: Configuration, scale: Float) {
+        configuration.fontScale = scale
+        val metrics = resources.displayMetrics
+        val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        wm.defaultDisplay.getMetrics(metrics)
+        metrics.scaledDensity = configuration.fontScale * metrics.density
+        baseContext.resources.updateConfiguration(configuration, metrics)
     }
 }

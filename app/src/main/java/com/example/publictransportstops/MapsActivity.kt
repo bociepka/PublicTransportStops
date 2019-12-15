@@ -1,5 +1,6 @@
 package com.example.publictransportstops
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.location.Location
@@ -17,10 +18,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.google.maps.android.PolyUtil
 import org.json.JSONObject
 
@@ -37,6 +35,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.app_bar_settings){
             startSettings()
+        } else if (item.itemId == R.id.home){
+            finish()
         }
 
         return super.onOptionsItemSelected(item)
@@ -72,6 +72,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        var prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE)
+        var night = prefs.getString("Night", "false")
+        if (night=="true") {
+            mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.maps))
+        }
         val bundle = intent.extras
         val stops: ArrayList<Stop>? = bundle?.getParcelableArrayList("stops")
 
