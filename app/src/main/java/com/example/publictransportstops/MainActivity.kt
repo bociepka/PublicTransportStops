@@ -38,11 +38,13 @@ var currentLangCode = String()
 
 
 class MainActivity : AppCompatActivity() {
+    lateinit var db : LocalStopsDb
     var sortingType = "location"
     var searchQuery = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        db = LocalDbClient.getDatabase(this)!!
         val sharedPref = this.getSharedPreferences("SharedPref",Context.MODE_PRIVATE)
         sortingType = sharedPref.getString("sortingType", "name") as String
         loadLocale()
@@ -55,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             startMapActivity()
         }
 
-        if (!isDataLoaded)
+        if (db.getStopsDAO().loadAllStops().isEmpty())
             getStops()
         else
             onStopsReady()
@@ -64,6 +66,10 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun onStopsReady() {
+//        stopsList.removeAll{true}
+        for(i in db!!.getStopsDAO().loadAllStops()){
+            stopsList.add(i)
+        }
         filteredStopsList = ArrayList(stopsList)
         val myAdapter = StopsAdapter(filteredStopsList)
         listView.adapter = myAdapter
@@ -96,6 +102,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun getStops() {
+        Log.i("TAG","started request")
         val url = "https://krakowpodreka.pl/pl/stops/positions/stops/?format=json"
         val directionsRequest =
             object : StringRequest(Request.Method.GET, url, Response.Listener<String> { response ->
@@ -107,7 +114,7 @@ class MainActivity : AppCompatActivity() {
                     val latitude = currentStop.get("latitude").toString().toDouble()
                     val longitude = currentStop.get("longitude").toString().toDouble()
                     val stop = Stop(id, name, latitude, longitude)
-                    stopsList.add(stop)
+                    db.getStopsDAO().insertStops(stop)
                 }
                 isDataLoaded = true
                 onStopsReady()
@@ -284,9 +291,9 @@ class MainActivity : AppCompatActivity() {
     /* MAP ACTIVITY */
 
     fun startMapActivity(){
-        val db = LocalDbClient.getDatabase(this)
+        db = LocalDbClient.getDatabase(this)!!
         for(stop in stopsList) {
-            db?.getStopsDAO()?.insertStops(stop)
+            db.getStopsDAO().insertStops(stop)
         }
         if(requestPermission()){
             val intent = Intent(this, MapsActivity::class.java)
