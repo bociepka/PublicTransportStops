@@ -80,15 +80,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         if (night=="true") {
             mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.maps))
         }
-        val bundle = intent.extras
-        val stops: ArrayList<Stop>? = bundle?.getParcelableArrayList("stops")
+
+
+        val db = LocalDbClient.getDatabase(this)
+        val stops2 = db?.getStopsDAO()?.loadAllStops()
+//        Log.i("Database",stops2[0].toString())
 
         try {
             val location = getCurrentLocation()
             val currentLocation = LatLng(location.latitude, location.longitude)
 
-            if(stops!=null) {
-                for (i in stops) {
+            if(stops2!=null) {
+                for (i in stops2) {
                     i.calculateDistance(location.latitude,location.longitude)
                     mMap.addMarker(MarkerOptions().position(LatLng(i.latitude,i.longitude)).title(i.name + "," + i.id))
                     mMap.setOnMarkerClickListener{

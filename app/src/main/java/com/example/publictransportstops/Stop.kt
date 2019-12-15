@@ -2,11 +2,14 @@ package com.example.publictransportstops
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.lang.Math.pow
 import java.lang.Math.sqrt
 import kotlin.math.pow
 
-class Stop(var id: Int, var name: String, var latitude: Double, var longitude: Double) : Parcelable {
+@Entity(tableName = "Stop")
+class Stop(@PrimaryKey(autoGenerate = false)var id: Int, var name: String, var latitude: Double, var longitude: Double) : Parcelable {
     var favourite: Boolean = false
     var distance: Double = 0.0
 

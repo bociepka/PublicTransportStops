@@ -284,12 +284,16 @@ class MainActivity : AppCompatActivity() {
     /* MAP ACTIVITY */
 
     fun startMapActivity(){
+        val db = LocalDbClient.getDatabase(this)
+        for(stop in stopsList) {
+            db?.getStopsDAO()?.insertStops(stop)
+        }
         if(requestPermission()){
             val intent = Intent(this, MapsActivity::class.java)
-            val bundle = Bundle()
-            val tmp = ArrayList(stopsList)
-            bundle.putParcelableArrayList("stops", tmp)
-            intent.putExtras(bundle)
+//            val bundle = Bundle()
+//            val tmp = ArrayList(stopsList)
+//            bundle.putParcelableArrayList("stops", tmp)
+//            intent.putExtras(bundle)
             startActivityForResult(intent,12)
         }
     }
