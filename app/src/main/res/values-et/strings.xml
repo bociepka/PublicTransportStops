@@ -14,4 +14,6 @@
     <string name="textOn">On</string>
     <string name="sort_by_name">Sorteeri nime</string>
     <string name="sort_by_distance">Sorteeri kaugus</string>
+    <string name="data_removed">Andmed on eemaldatud</string>
+    <string name="remove_data">Eemaldage andmed:</string>
 </resources>

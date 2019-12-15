@@ -17,6 +17,8 @@ import kotlinx.android.synthetic.main.activity_settings.*
 import java.util.*
 import android.widget.Switch
 import android.view.WindowManager
+import android.widget.Toast
+import java.io.File
 
 class Settings : AppCompatActivity() {
 
@@ -69,6 +71,20 @@ class Settings : AppCompatActivity() {
             editor.putString("Night", isChecked.toString())
             editor.apply()
         }
+
+        removeDataButton.setOnClickListener{
+            val sharedPreferences = this.getSharedPreferences("SharedPref",Context.MODE_PRIVATE)
+            sharedPreferences.edit().remove("sortingType").apply();
+            File(this.filesDir, "favourites.txt").writeText("")
+            for(stop in stopsList){
+                stop.favourite = false
+            }
+            val text = R.string.data_removed
+            val duration = Toast.LENGTH_SHORT
+            val toast = Toast.makeText(applicationContext, text, duration)
+            toast.show()
+        }
+
         currentLangCode = getResources().getConfiguration().locale.getLanguage()
         currentLangCode += "2"
         setLocale(currentLangCode)

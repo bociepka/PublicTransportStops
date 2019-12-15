@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+        val sharedPref = this.getSharedPreferences("SharedPref",Context.MODE_PRIVATE)
         sortingType = sharedPref.getString("sortingType", "name") as String
         loadLocale()
         currentLangCode = getResources().getConfiguration().locale.getLanguage()
@@ -172,10 +172,10 @@ class MainActivity : AppCompatActivity() {
             val myAdapter = StopsAdapter(filteredStopsList)
             listView.adapter = myAdapter
             myAdapter.notifyDataSetChanged()
-            val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+            val sharedPref = this.getSharedPreferences("SharedPref",Context.MODE_PRIVATE)
             with(sharedPref.edit()){
                 putString("sortingType", sortingType)
-                commit()
+                apply()
             }
         }
         else if(item.itemId == R.id.app_bar_sort_name){
@@ -184,10 +184,10 @@ class MainActivity : AppCompatActivity() {
             val myAdapter = StopsAdapter(filteredStopsList)
             listView.adapter = myAdapter
             myAdapter.notifyDataSetChanged()
-            val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+            val sharedPref = this.getSharedPreferences("SharedPref",Context.MODE_PRIVATE)
             with(sharedPref.edit()){
                 putString("sortingType", sortingType)
-                commit()
+                apply()
             }
         }
 

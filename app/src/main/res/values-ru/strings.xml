@@ -14,4 +14,6 @@
     <string name="colorblindMode">Высокая контрастность:</string>
     <string name="sort_by_distance">Сортировать по расстоянию</string>
     <string name="sort_by_name">Сортировать по имени</string>
+    <string name="data_removed">Данные удалены</string>
+    <string name="remove_data">Удалить все данные:</string>
 </resources>

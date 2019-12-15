@@ -11,23 +11,21 @@
         android:id="@+id/switchBigger"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
         android:layout_marginEnd="16dp"
         android:text=""
         android:textOff="@string/textOff"
         android:textOn="@string/textOn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/languageInfo" />
+        app:layout_constraintTop_toTopOf="@+id/biggerFont" />
 
     <Switch
         android:id="@+id/switchColorblind"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:text=""
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchBigger" />
+        app:layout_constraintTop_toTopOf="@+id/colorblind" />
 
     <TextView
         android:id="@+id/languageInfo"
@@ -96,9 +94,29 @@
         android:id="@+id/switchNight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:text=""
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchColorblind" />
+        app:layout_constraintTop_toTopOf="@+id/nightmode" />
+
+    <TextView
+        android:id="@+id/removeData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/remove_data"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nightmode" />
+
+    <Button
+        android:id="@+id/removeDataButton"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/greyButton"
+        android:foreground="@drawable/ic_delete_black_24dp"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/removeData" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,4 +14,6 @@
     <string name="nightMode">Nachtmodus:</string>
     <string name="sort_by_distance">Nach Entfernung sortieren</string>
     <string name="sort_by_name">Nach Name sortieren</string>
+    <string name="data_removed">Daten entfernt</string>
+    <string name="remove_data">Daten entfernen:</string>
 </resources>

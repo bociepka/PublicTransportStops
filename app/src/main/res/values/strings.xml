@@ -16,4 +16,6 @@
 
     <string name="sort_by_distance">Sort by distance</string>
     <string name="sort_by_name">Sort by name</string>
+    <string name="remove_data">Remove all data:</string>
+    <string name="data_removed">Data removed</string>
 </resources>
