@@ -16,4 +16,5 @@
     <string name="sort_by_distance">Sorteeri kaugus</string>
     <string name="data_removed">Andmed on eemaldatud</string>
     <string name="remove_data">Eemaldage andmed:</string>
+    <string name="chooseLanguage">Vali keel:</string>
 </resources>

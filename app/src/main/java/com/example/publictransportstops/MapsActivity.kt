@@ -3,12 +3,15 @@ package com.example.publictransportstops
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.Location
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.annotation.RequiresApi
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
@@ -45,6 +48,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         return super.onOptionsItemSelected(item)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
@@ -54,6 +58,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         createMapAndMarkMyLocation()
+
+        //adjusting the motiv
+        var prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE)
+        var night = prefs.getString("Night", "false")
+        var colorblind = prefs.getString("ColorBlind", "false")
+        var bar = supportActionBar
+        if (colorblind=="true"){
+            var color = ColorDrawable(getColor(R.color.red))
+            bar!!.setBackgroundDrawable(color)
+        }
     }
 
 

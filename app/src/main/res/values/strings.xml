@@ -5,6 +5,7 @@
 
     <string name="languageInfo">Language:</string>
     <string name="buttonChangeLanguage">Change</string>
+    <string name="chooseLanguage">Choose language:</string>
     <string name="biggerFont">Large letters:</string>
     <string name="colorblindMode">High contrast:</string>
     <string name="nightMode">Night mode:</string>

@@ -16,4 +16,5 @@
     <string name="sort_by_distance">Sortuj wg odległości</string>
     <string name="data_removed">Dane usunięte</string>
     <string name="remove_data">Usuń dane aplikacji:</string>
+    <string name="chooseLanguage">Wybierz język:</string>
 </resources>

@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import android.os.AsyncTask
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -17,6 +19,7 @@ import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.SearchView
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.android.volley.Request
 import com.android.volley.Response
@@ -203,6 +206,7 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         val searchItem: MenuItem = menu!!.findItem(R.id.app_bar_search)
@@ -224,6 +228,15 @@ class MainActivity : AppCompatActivity() {
         if (searchQuery != "") {
             searchView.setQuery(searchQuery, true)
             searchView.isIconified = false
+        }
+        //adjusting the motiv
+        var prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE)
+        var night = prefs.getString("Night", "false")
+        var colorblind = prefs.getString("ColorBlind", "false")
+        var bar = supportActionBar
+        if (colorblind=="true"){
+            var color = ColorDrawable(getColor(R.color.red))
+            bar!!.setBackgroundDrawable(color)
         }
         return super.onCreateOptionsMenu(menu)
     }

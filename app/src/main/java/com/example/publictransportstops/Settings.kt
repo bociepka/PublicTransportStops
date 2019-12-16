@@ -80,7 +80,7 @@ class Settings : AppCompatActivity() {
 //                stop.favourite = false
 //            }
             val db = LocalDbClient.getDatabase(this)
-            db!!.clearAllTables()
+            //db!!.clearAllTables()
             val text = R.string.data_removed
             val duration = Toast.LENGTH_SHORT
             val toast = Toast.makeText(applicationContext, text, duration)
@@ -95,8 +95,8 @@ class Settings : AppCompatActivity() {
     private fun showChangeLanguageDialog() {
         lateinit var dialog:AlertDialog
         var listItems = arrayOf("English", "Deutsch", "Polski", "русский", "Eesti keel")
-        var mBuilder = AlertDialog.Builder(this)
-        mBuilder.setTitle("Choose language...")
+        var mBuilder = AlertDialog.Builder(this, R.style.AlertDialogCustom)
+        mBuilder.setTitle(R.string.chooseLanguage)
         mBuilder.setSingleChoiceItems(listItems, -1,
             DialogInterface.OnClickListener { dialog, item ->
                 val language = listItems[item]

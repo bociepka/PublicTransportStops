@@ -4,15 +4,20 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import androidx.annotation.RequiresApi
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_departures.*
+import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
@@ -21,8 +26,18 @@ class DeparturesActivity : AppCompatActivity() {
     var departuresList = mutableListOf<Departure>()
     var currentLangCode = String()
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_departures, menu)
+        //adjusting the motiv
+        var prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE)
+        var night = prefs.getString("Night", "false")
+        var colorblind = prefs.getString("ColorBlind", "false")
+        var bar = supportActionBar
+        if (colorblind=="true"){
+            var color = ColorDrawable(getColor(R.color.red))
+            bar!!.setBackgroundDrawable(color)
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -42,6 +57,7 @@ class DeparturesActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_departures)
@@ -53,6 +69,24 @@ class DeparturesActivity : AppCompatActivity() {
         title = stopName
         getDepartures(id)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
+        //adjusting the motiv
+        var prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE)
+        var night = prefs.getString("Night", "false")
+        var colorblind = prefs.getString("ColorBlind", "false")
+        var toolbar4 = toolbar4
+        var toolbar5 = toolbar5
+        var backgroundDeparture = departuresListView
+        var bar = supportActionBar
+        if (colorblind=="true"){
+            var color = ColorDrawable(getColor(R.color.red))
+            bar!!.setBackgroundDrawable(color)
+            toolbar4!!.setBackgroundDrawable(color)
+            toolbar5!!.setBackgroundDrawable(color)
+            backgroundDeparture.setBackgroundColor(resources.getColor(R.color.navyblue))
+        } else if (night=="true"){
+            backgroundDeparture.setBackgroundColor(resources.getColor(R.color.backGroundBlack))
+        }
 
         showWayButton.setOnClickListener {
             showWayToStop()
