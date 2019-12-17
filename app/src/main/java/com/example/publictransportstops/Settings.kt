@@ -60,16 +60,19 @@ class Settings : AppCompatActivity() {
             var editor = getSharedPreferences("Settings", Context.MODE_PRIVATE).edit()
             editor.putString("Bigger", isChecked.toString())
             editor.apply()
+            recreate()
         }
         switchColorblind.setOnCheckedChangeListener { buttonView, isChecked ->
             var editor = getSharedPreferences("Settings", Context.MODE_PRIVATE).edit()
             editor.putString("ColorBlind", isChecked.toString())
             editor.apply()
+            recreate()
         }
         switchNight.setOnCheckedChangeListener { buttonView, isChecked ->
             var editor = getSharedPreferences("Settings", Context.MODE_PRIVATE).edit()
             editor.putString("Night", isChecked.toString())
             editor.apply()
+            recreate()
         }
 
         removeDataButton.setOnClickListener{
@@ -80,11 +83,12 @@ class Settings : AppCompatActivity() {
 //                stop.favourite = false
 //            }
             val db = LocalDbClient.getDatabase(this)
-            //db!!.clearAllTables()
+            db!!.clearAllTables()
             val text = R.string.data_removed
             val duration = Toast.LENGTH_SHORT
             val toast = Toast.makeText(applicationContext, text, duration)
             toast.show()
+//            finish()
         }
 
         currentLangCode = getResources().getConfiguration().locale.getLanguage()
@@ -181,4 +185,6 @@ class Settings : AppCompatActivity() {
         metrics.scaledDensity = configuration.fontScale * metrics.density
         baseContext.resources.updateConfiguration(configuration, metrics)
     }
+
+
 }

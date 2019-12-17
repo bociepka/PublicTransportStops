@@ -55,7 +55,15 @@ class MainActivity : AppCompatActivity() {
         setTitle(resources.getString(R.string.app_name))  //reloading the title to language
         setContentView(R.layout.activity_main)
 
-        requestPermission()
+        if(requestPermission()){
+            main()
+        }
+
+
+    }
+
+
+    fun main(){
         mapButton.setOnClickListener {
             startMapActivity()
         }
@@ -64,7 +72,6 @@ class MainActivity : AppCompatActivity() {
             getStops()
         else
             onStopsReady()
-
     }
 
 
@@ -77,7 +84,6 @@ class MainActivity : AppCompatActivity() {
 //        filteredStopsList = ArrayList(stopsList)
         val myAdapter = StopsAdapter(filteredStopsList)
         listView.adapter = myAdapter
-        getFavourites()
         sortStopsList(sortingType)
         myAdapter.notifyDataSetChanged()
     }
@@ -244,7 +250,6 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("search", searchQuery)
         super.onSaveInstanceState(outState)
-        saveFavourites()
 
     }
 
@@ -252,15 +257,21 @@ class MainActivity : AppCompatActivity() {
         searchQuery = savedInstanceState.getString("search").toString()
         filterOutput(searchQuery)
         super.onRestoreInstanceState(savedInstanceState)
-//        getFavourites()
     }
 
     override fun onResume() {
         super.onResume()
         loadLocale()
         var tempLangCode = getResources().getConfiguration().locale.getLanguage()
-        if (tempLangCode.contains('2')){
-            var newTempLang = tempLangCode.take(2)
+        if (db.getStopsDAO().loadAllStops().isEmpty()){
+            filteredStopsList.removeAll{true}
+            var myAdapter = StopsAdapter(filteredStopsList)
+            listView.adapter = myAdapter
+            myAdapter.notifyDataSetChanged()
+            getStops()
+        }
+        else if (tempLangCode.contains('2')){
+            var newTempLang = tempLangCode.dropLast(1)
             setLocale(newTempLang)
             recreate()
         }
@@ -268,80 +279,43 @@ class MainActivity : AppCompatActivity() {
             currentLangCode = getResources().getConfiguration().locale.getLanguage()
             recreate()
         }
-        if (db.getStopsDAO().loadAllStops().isEmpty()){
-            getStops()
-        }
     }
 
-    fun saveFavourites(){
-//        val file : File = File(this.filesDir, "favourites.txt")
-//        file.writeText("")
-//        for ((index, stop) in stopsList.withIndex()){
-//            if(stop.favourite){
-//                file.appendText("$index,")
-//            }
-//        }
-    }
 
-    fun getFavourites() {
-//        val file : File = File(this.filesDir, "favourites.txt")
-//        var favourites: String = ""
-//        try {
-//            favourites = file.readText()
-//        }catch(e: Exception){
-//
-//        }
-//        Log.i("TAG","String read")
-//        Log.i("TAG",favourites)
-//        var list : List<String> = favourites.split(',')
-//        Log.i("TAG","String splitted")
-//        for (favourite in list){
-//            Log.i("TAG","$favourite")
-//            if(favourite.toIntOrNull()!=null)
-//            stopsList[favourite.toInt()].favourite = true
-//            else{
-//                file.writeText("")
-//            }
-//        }
-//        Log.i("TAG","Favourites added")
-//        Log.i("TAG",favourites)
-    }
+
     /* MAP ACTIVITY */
 
     fun startMapActivity(){
-//        db = LocalDbClient.getDatabase(this)!!
-//        for(stop in stopsList) {
-//            db.getStopsDAO().insertStops(stop)
-//        }
+
         if(requestPermission()){
             val intent = Intent(this, MapsActivity::class.java)
-//            val bundle = Bundle()
-//            val tmp = ArrayList(stopsList)
-//            bundle.putParcelableArrayList("stops", tmp)
-//            intent.putExtras(bundle)
             startActivityForResult(intent,12)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode!=12)
+            onResume()
+        else {
+            Log.i("chuj", "chuj")
+            if (data == null)
+                return
 
-        if(data==null)
-            return
+            val context = this
+            val intent = Intent(context, DeparturesActivity::class.java)
+            val id = data.getStringExtra("id")
+            val name = data.getStringExtra("name")
+            val latitude = data.getDoubleExtra("lat", 50.063511666)
+            val longitude = data.getDoubleExtra("lon", 19.923723888)
 
-        val context = this
-        val intent = Intent(context,DeparturesActivity::class.java)
-        val id = data.getStringExtra("id")
-        val name = data.getStringExtra("name")
-        val latitude = data.getDoubleExtra("lat",50.063511666)
-        val longitude = data.getDoubleExtra("lon",19.923723888)
+            intent.putExtra("id", id?.toInt())
+            intent.putExtra("name", name)
+            intent.putExtra("lat", latitude)
+            intent.putExtra("lon", longitude)
 
-        intent.putExtra("id", id?.toInt())
-        intent.putExtra("name",name)
-        intent.putExtra("lat",latitude)
-        intent.putExtra("lon",longitude)
-
-        startActivity(intent)
+            startActivity(intent)
+        }
     }
 
 
@@ -366,6 +340,7 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            main()
 
         }else if(grantResults.isNotEmpty()){
             requestPermission()
@@ -376,9 +351,7 @@ class MainActivity : AppCompatActivity() {
 
     fun startSettings(){
         val intent = Intent(this, Settings1::class.java)
-        val bundle = Bundle()
-        intent.putExtras(bundle)
-        startActivityForResult(intent,12)
+        startActivityForResult(intent,14)
     }
     private fun getCurrentLocation(): Location? {
         val trackLocation = TrackLocation(this)

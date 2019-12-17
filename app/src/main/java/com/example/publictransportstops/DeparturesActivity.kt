@@ -180,7 +180,7 @@ class DeparturesActivity : AppCompatActivity() {
         loadLocale()
         var tempLangCode = getResources().getConfiguration().locale.getLanguage()
         if (tempLangCode.contains('2')){
-            var newTempLang = tempLangCode.take(2)
+            var newTempLang = tempLangCode.dropLast(1)
             setLocale(newTempLang)
             recreate()
         }
@@ -192,9 +192,8 @@ class DeparturesActivity : AppCompatActivity() {
 
     fun startSettings(){
         val intent = Intent(this, Settings::class.java)
-        val bundle = Bundle()
-        intent.putExtras(bundle)
-        startActivityForResult(intent,12)
+
+        startActivityForResult(intent,14)
     }
     fun adjustFontScale(configuration: Configuration, scale: Float) {
         configuration.fontScale = scale

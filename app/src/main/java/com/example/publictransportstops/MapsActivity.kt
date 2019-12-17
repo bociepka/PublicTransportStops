@@ -211,7 +211,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val intent = Intent(this, Settings::class.java)
         val bundle = Bundle()
         intent.putExtras(bundle)
-        startActivityForResult(intent,12)
+        startActivityForResult(intent,14)
     }
 
     override fun onResume() {
