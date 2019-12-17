@@ -98,16 +98,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val db = LocalDbClient.getDatabase(this)
         val stops2 = db?.getStopsDAO()?.loadAllStops()
-//        Log.i("Database",stops2[0].toString())
+        val showWay = intent.getStringExtra("show")
 
         try {
             val location = getCurrentLocation()
             val currentLocation = LatLng(location.latitude, location.longitude)
+            val bitmap = BitmapDescriptorFactory.fromResource(R.drawable.busicon)
 
-            if(stops2!=null) {
+
+            if(showWay==null && stops2!=null) {
                 for (i in stops2) {
                     i.calculateDistance(location.latitude,location.longitude)
-                    mMap.addMarker(MarkerOptions().position(LatLng(i.latitude,i.longitude)).title(i.name + "," + i.id))
+                    mMap.addMarker(MarkerOptions().position(LatLng(i.latitude,i.longitude)).title(i.name + "," + i.id)).setIcon(bitmap)
                     mMap.setOnMarkerClickListener{
                             marker -> onMarkerClick(marker)
                     }
@@ -122,11 +124,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 Log.i("LATITUDE", lat.toString())
                 Log.i("LONGITUDE",lon.toString())
 
-                mMap.addMarker(MarkerOptions().position(LatLng(lat, lon)).title(name))
-                val url = createURL(currentLocation,"walking",lat,lon)
-                val result = sendRequest(url)
+                mMap.addMarker(MarkerOptions().position(LatLng(lat, lon)).title(name)).setIcon(bitmap)
+                val myThread = Thread {
+                    val url = createURL(currentLocation, "walking", lat, lon)
+                    val result = sendRequest(url)
+                }
+                myThread.start()
             }
-            mMap.addMarker(MarkerOptions().position(currentLocation).title("You are here")) // TODO set icon
+            mMap.addMarker(MarkerOptions().position(currentLocation).title("You are here"))
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,15F))
         }
@@ -187,7 +192,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
 
                     for (i in 0 until path.size) {
-                        mMap.addPolyline(PolylineOptions().addAll(path[i]).color(Color.BLUE))
+                        this.runOnUiThread{
+                            mMap.addPolyline(PolylineOptions().addAll(path[i]).color(Color.BLUE))
+                        }
                     }
                 }catch (e: Exception){
                     Log.e("Error","It is impossible to reach hardcoded location from your position")

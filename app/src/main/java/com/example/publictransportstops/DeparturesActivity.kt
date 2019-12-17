@@ -136,6 +136,7 @@ class DeparturesActivity : AppCompatActivity() {
         stopIntent.putExtra("name",stopName)
         stopIntent.putExtra("lat",latitude)
         stopIntent.putExtra("lon",longitude)
+        stopIntent.putExtra("show","show")
 
         startActivity(stopIntent)
 
