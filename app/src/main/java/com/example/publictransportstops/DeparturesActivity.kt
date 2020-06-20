@@ -4,23 +4,20 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_departures.*
-import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
 import java.util.*
-import kotlin.collections.ArrayList
 
 class DeparturesActivity : AppCompatActivity() {
     var departuresList = mutableListOf<Departure>()

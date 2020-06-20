@@ -1,24 +1,18 @@
 package com.example.publictransportstops
 
-import android.app.ActionBar
 import android.app.Activity
-import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.DialogInterface
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
+import android.view.WindowManager
+import android.widget.Switch
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_settings.*
 import java.util.*
-import android.widget.Switch
-import android.view.WindowManager
-import android.widget.Toast
-import java.io.File
 
 class Settings : AppCompatActivity() {
 
@@ -91,8 +85,10 @@ class Settings : AppCompatActivity() {
 //            finish()
         }
 
-        currentLangCode = getResources().getConfiguration().locale.getLanguage()
-        currentLangCode += "2"
+        currentLangCode = resources.configuration.locale.language
+        if (!currentLangCode.endsWith("2")) {
+            currentLangCode += "2"
+        }
         setLocale(currentLangCode)
     }
 
@@ -127,7 +123,7 @@ class Settings : AppCompatActivity() {
     }
 
     private fun setLocale(lang: String) {
-        var locale = Locale(lang)
+        var locale = Locale(lang.removeSuffix("2"))
         Locale.setDefault(locale)
         var config = Configuration()
         config.locale = locale
@@ -165,15 +161,15 @@ class Settings : AppCompatActivity() {
         var prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE)
         var language = prefs.getString("My lang", "")
         var flagPlace = languageFlag
-        if (language=="en"){
+        if (language!!.removeSuffix("2")=="en"){
             flagPlace.setImageDrawable(getDrawable(R.drawable.en))
-        } else if (language=="de"){
+        } else if (language.removeSuffix("2")=="de"){
             flagPlace.setImageDrawable(getDrawable(R.drawable.de))
-        } else if (language=="ru"){
+        } else if (language.removeSuffix("2")=="ru"){
             flagPlace.setImageDrawable(getDrawable(R.drawable.ru))
-        } else if (language=="pl"){
+        } else if (language.removeSuffix("2")=="pl"){
             flagPlace.setImageDrawable(getDrawable(R.drawable.pl))
-        } else if (language=="et") {
+        } else if (language.removeSuffix("2")=="et") {
             flagPlace.setImageDrawable(getDrawable(R.drawable.ee))
         }
     }
