@@ -6,7 +6,7 @@ To run the application you need to add your Google Maps API key and put into a r
 ```
 <resources>
        <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">YOUR_API_KEY</string>
-   </resources>
+</resources>
 ```
 
 [Documentation/Description](https://github.com/bociepka/PublicTransportStops/blob/master/App-description.pdf)
